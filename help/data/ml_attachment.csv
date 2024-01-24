@@ -1,0 +1,485 @@
+Metabolite,Chemical class
+L-Carnitine,Acylcarnitine
+L-Acetylcarnitine,Acylcarnitine
+Palmitoylcarnitine(AcCa(16:0),Acylcarnitine
+Decanoylcarnitine(AcCa(10:0),Acylcarnitine
+Isovalerylcarnitine(AcCa(5:0),Acylcarnitine
+Hexanoylcarnitine(AcCa(6:0),Acylcarnitine
+Isobutyrylcarnitine(AcCa(4:0),Acylcarnitine
+Octanoylcarnitine(AcCa(8:0),Acylcarnitine
+Propionylcarnitine(AcCa(3:0),Acylcarnitine
+Butyrylcarnitine(AcCa(4:0),Acylcarnitine
+Oleoylcarnitine(AcCa(18:1),Acylcarnitine
+Tetradecanoylcarnitine(AcCa(14:0),Acylcarnitine
+Valerylcarnitine(AcCa(5:0),Acylcarnitine
+9-Hexadecenoylcarnitine(AcCa(16:1),Acylcarnitine
+3-Hydroxyisovalerylcarnitine(AcCa(5:0-OH),Acylcarnitine
+Hexanoylcarnitine(AcCa(6:0)3,Acylcarnitine
+Hexanoylcarnitine(AcCa(6:0)1,Acylcarnitine
+Hexanoylcarnitine(AcCa(6:0)2,Acylcarnitine
+Hydroxybutyrylcarnitine(AcCa(4:0-OH),Acylcarnitine
+Creatine,Amino acid
+Choline,Amino acid
+Glutathione,Amino acid
+L-Tyrosine,Amino acid
+Creatinine,Amino acid
+S-Adenosylhomocysteine,Amino acid
+Spermine,Amino acid
+N1-Acetylspermidine,Amino acid
+Asymmetric dimethylarginine,Amino acid
+Symmetric dimethylarginine,Carbohydrate
+Proline betaine,Carbohydrate
+L-Histidine,Carbohydrate
+Taurine,Carbohydrate
+Cysteineglutathione disulfide,Carbohydrate
+L-Tryptophan,Carbohydrate
+N-Acetylaspartylglutamic acid,Carbohydrate
+N-Acetylglutamic acid,Carbohydrate
+beta-Alanine,Carbohydrate
+Glycine,Carbohydrate
+L-Glutamic acid,Carbohydrate
+L-Phenylalanine,Carbohydrate
+L-Alanine,Carbohydrate
+L-Proline,Carbohydrate
+L-Threonine,Cardiolipin
+L-Asparagine,Cardiolipin
+L-Isoleucine,Cardiolipin
+L-Lysine,Cardiolipin
+L-Serine,Ceramide
+L-Aspartic acid,Ceramide
+Ornithine,Ceramide
+Pyroglutamic acid,Diacylglycerol
+Urocanic acid,Diacylglycerol
+L-Arginine,Diacylglycerol
+L-Cysteine,Diacylglycerol
+L-Glutamine,Diacylglycerol
+L-Leucine,Diacylglycerol
+L-Methionine,Exogenous
+N-Acetyl-L-alanine,Exogenous
+N-Acetyl-L-aspartic acid,Exogenous
+L-Valine,Exogenous
+Citrulline,Fatty acid
+Phosphocreatine,Fatty acid
+O-Acetylserine,Fatty acid
+Oxidized glutathione,Fatty acid
+N-Acetyl-L-methionine,Fatty acid
+"Glutamate, gamma-methyl ester",Fatty acid
+N-Acetyl-beta-alanine,Fatty acid
+1-Methylhistidine,Fatty acid
+"N,N,N-trimethyl-5-aminovaleric acid",Fatty acid
+L-Cystine,Fatty acid
+413_MyristoleoylcarnitineAcCa(14:1) _MyristoleoylcarnitineAcCa(14:1) ,Gangliosid
+416_HexadecenoylcarnitineAcCa(16:1)_HexadecenoylcarnitineAcCa(16:1),Gangliosid
+417_LPE(18:2)_LPE(18:2),Gangliosid
+418_PalmitoylcarnitineAcCa(16:0)_PalmitoylcarnitineAcCa(16:0),Gangliosid
+419_LPE(18:0)_LPE(18:0),Gangliosid
+420_AcCa(17:1)_AcCa(17:1),Gangliosid
+421_LPC(16:1)_LPC(16:1),Gangliosid
+422_LPC(16:0p)_LPC(16:0p),Gangliosid
+423_LPC(16:0)_LPC(16:0),Glycerophosphocholine
+424_LPC(16:0e)_LPC(16:0e),Glycerophosphocholine
+425_Linolenyl carnitineAcCa(18:3)_Linolenyl carnitineAcCa(18:3),Glycerophosphocholine
+426_LinoleylcarnitineAcCa(18:2)_LinoleylcarnitineAcCa(18:2),Glycerophosphocholine
+427_OleoylcarnitineAcCa(18:1)_OleoylcarnitineAcCa(18:1),Glycerophosphocholine
+428_StearoylcarnitineAcCa(18:0)_StearoylcarnitineAcCa(18:0),Glycerophosphocholine
+429_LPC(18:3)_LPC(18:3),Glycerophosphocholine
+430_LPC(18:2)_LPC(18:2),Glycerophosphocholine
+431_LPC(18:1)_LPC(18:1),Glycerophosphocholine
+432_LPC(18:0p)_LPC(18:0p),Glycerophosphocholine
+433_LPC(18:0)_LPC(18:0),Glycerophosphocholine
+434_ArachidonoylcarnitineAcCa(20:4) _ArachidonoylcarnitineAcCa(20:4) ,Glycerophosphocholine
+435_AcCa(20:3)_AcCa(20:3) ,Glycerophosphocholine
+436_AcCa(20:2)_AcCa(20:2) ,Glycerophosphocholine
+437_EicoseneoylcarnitineAcCa(20:1) _EicoseneoylcarnitineAcCa(20:1) ,Glycerophosphocholine
+438_ArachidylcarnitineAcCa(20:0)_ArachidylcarnitineAcCa(20:0),Glycerophosphocholine
+439_LPC(20:4)_LPC(20:4),Glycerophosphocholine
+440_LPC(20:3)_LPC(20:3),Glycerophosphocholine
+441_LPC(20:2)_LPC(20:2),Glycerophosphocholine
+442_LPC(22:5)_LPC(22:5),Glycerophosphocholine
+443_Cer(d34:0)_Cer(d18:0/16:0),Glycerophosphocholine
+444_Cer(d36:1)_Cer(d18:1/18:0),Glycerophosphocholine
+445_DG(34:2)_DG(16:0/18:2),Glycerophosphocholine
+446_DG(34:1)_DG(16:0/18:1),Glycerophosphocholine
+447_TG(34:0)_TG(8:0/12:0/14:0),Glycerophosphocholine
+448_SM(d32:1)_SM(d32:1),Glycerophosphocholine
+449_PC(30:1e)_PC(30:1e),Glycerophosphocholine
+450_PC(30:0)_PC(30:0),Glycerophosphocholine
+451_SM(d33:1)_SM(d33:1),Glycerophosphocholine
+452_DG(36:3)_DG(18:1/18:2),Glycerophosphocholine
+453_DG(36:3)_DG(18:0/18:3),Glycerophosphocholine
+454_PE(34:3p)_PE(16:0p/18:3),Glycerophosphocholine
+455_DG(36:2)_DG(18:1/18:1),Glycerophosphocholine
+456_DG(36:2)_DG(18:0/18:2),Glycerophosphocholine
+457_PE(34:2p)_PE(34:2p),Glycerophosphocholine
+458_PE(34:2)_PE(16:1/18:1)/PE(16:0/18:2),Glycerophosphocholine
+459_DG(36:1)_DG(18:0/18:1),Glycerophosphocholine
+460_TG(36:0)_TG(12:0/12:0/12:0),Glycerophosphocholine
+461_PE(34:1p)_PE(34:1p),Glycerophosphocholine
+462_PE(34:1)_PE(16:0/18:1),Glycerophosphocholine
+463_PC(31:1)_PC(17:1/14:0),Glycerophosphocholine
+464_PC(31:0p)_PC(31:0p),Glycerophosphocholine
+465_PC(31:0)_PC(31:0),Glycerophosphocholine
+466_PE(34:0)_PE(18:0/16:0),Glycerophosphocholine
+467_SM(d34:1)_SM(d34:1),Glycerophosphocholine
+468_SM(d34:0)_SM(d34:0),Glycerophosphocholine
+469_PS(34:1)_PS(17:0/17:0),Glycerophosphocholine
+470_PE(35:2p)_PE(18:1p/17:1),Glycerophosphocholine
+471_PC(32:2)_PC(14:0/18:2),Glycerophosphocholine
+472_PG(34:1)_PG(16:0/18:1),Glycerophosphocholine
+473_PE(35:1p)_PE(18:0p/17:1),Glycerophosphocholine
+474_PC(32:1p)_PC(32:1p),Glycerophosphocholine
+475_PC(32:1)_PC(16:0/16:1),Glycerophosphocholine
+476_Cer(d40:1)_Cer(d18:1/22:0),Glycerophosphocholine
+477_PC(32:1e)_PC(32:1e),Glycerophosphocholine
+478_PC(32:0p)_PC(18:0p/14:0),Glycerophosphocholine
+479_PC(32:0)_PC(16:0/16:0),Glycerophosphoethanolamine
+480_SM(d35:1)_SM(d35:1),Glycerophosphoethanolamine
+481_PC(32:0e)_PC(32:0e),Glycerophosphoethanolamine
+482_PE(36:5p)_PE(36:5p),Glycerophosphoethanolamine
+483_DG(38:4)_DG(18:0/20:4),Glycerophosphoethanolamine
+484_PE(36:4p)_PE(18:1p/18:3),Glycerophosphoethanolamine
+485_PE(36:4p)_PE(36:4p),Glycerophosphoethanolamine
+486_PE(36:4)_PE(18:1/18:3)/PE(18:2/18:2),Glycerophosphoethanolamine
+487_PE(36:3p)_PE(P-16:0/20:3n6),Glycerophosphoethanolamine
+488_PE(36:3p)_PE(P-18:1/18:2),Glycerophosphoethanolamine
+489_PC(33:3)_PC(15:0/18:3),Glycerophosphoethanolamine
+490_PE(36:3)_PE(18:1/18:2),Glycerophosphoethanolamine
+491_PE(36:2p)_PE(36:2p),Glycerophosphoethanolamine
+492_PE(36:2p)_PE(18:0p/18:2),Glycerophosphoethanolamine
+493_PE(36:2)_PE(18:0/18:2),Glycerophosphoethanolamine
+494_PE(36:2)_PE(18:1/18:1),Glycerophosphoethanolamine
+495_PC(33:2)_PC(33:2),Glycerophosphoethanolamine
+496_TG(38:0)_TG(12:0/12:0/14:0),Glycerophosphoethanolamine
+497_PS(35:0)_PS(15:0/20:0),Glycerophosphoethanolamine
+498_PC(33:1p)_PC(33:1p),Glycerophosphoethanolamine
+499_PE(36:1p)_PE(36:1p),Glycerophosphoethanolamine
+500_PE(36:1)_PE(18:0/18:1),Glycerophosphoethanolamine
+501_PC(33:1)_PC(17:1/16:0),Glycerophosphoethanolamine
+502_SM(d36:2)_SM(d36:2),Glycerophosphoethanolamine
+503_Cer(d41:1)_Cer(d18:1/23:0),Glycerophosphoethanolamine
+504_PC(33:0p)_PC(33:0p),Glycerophosphoethanolamine
+505_PC(33:0)_PC(33:0),Glycerophosphoethanolamine
+506_SM(d36:1)_SM(d36:1),Glycerophosphoethanolamine
+507_SM(d36:0)_SM(d36:0),Glycerophosphoethanolamine
+508_PC(34:4)_PC(16:1/18:3),Glycerophosphoethanolamine
+509_PS(36:2)_PS(18:1/18:1),Glycerophosphoethanolamine
+510_PE(37:3)_PE(19:1/18:2),Glycerophosphoethanolamine
+511_PC(34:3)_PC(16:0/18:3),Glycerophosphoethanolamine
+512_PC(34:3)_PC(16:0/18:3),Glycerophosphoethanolamine
+513_PG(36:2)_PG(18:1/18:1),Glycerophosphoethanolamine
+514_PC(34:2p)_PC(18:2p/16:0),Glycerophosphoethanolamine
+515_PC(34:2p)_PC(34:2p),Glycerophosphoethanolamine
+516_PE(37:2)_PE(19:1/18:1),Glycerophosphoethanolamine
+517_PC(34:2)_PC(16:0/18:2),Glycerophosphoethanolamine
+518_Cer(d42:2)_Cer(d18:1/24:1),Glycerophosphoethanolamine
+519_PC(34:1p)_PC(34:1p),Glycerophosphoethanolamine
+520_PC(34:2e)_PC(34:2e),Glycerophosphoethanolamine
+521_PC(34:1)_PC(16:0/18:1),Glycerophosphoethanolamine
+522_Cer(d42:1)_Cer(d18:1/24:0),Glycerophosphoethanolamine
+523_PC(34:1e)_PC(34:1e),Glycerophosphoethanolamine
+524_PC(34:0p)_PC(34:0p),Glycerophosphoethanolamine
+525_PC(34:0)_PC(34:0),Glycerophosphoethanolamine
+526_SM(d37:1)_SM(d37:1),Glycerophosphoethanolamine
+527_Cer(d42:0(2OH))_Cer(d42:0(2OH)),Glycerophosphoethanolamine
+528_PC(34:0e)_PC(34:0e),Glycerophosphoethanolamine
+529_PE(38:6p)_PE(18:1p/20:5),Glycerophosphoethanolamine
+530_PC(35:6)_PC(35:6),Glycerophosphoethanolamine
+531_PE(38:5p)_PE(P-18:1/20:4),Glycerophosphoethanolamine
+532_PE(38:5)_PE(18:3/20:2),Glycerophosphoethanolamine
+533_PE(38:5)_PE(18:0/20:5),Glycerophosphoethanolamine
+534_PE(38:4p)_PE(P-16:0/22:4),Glycerophosphoethanolamine
+535_PE(38:4p)_PE(P-18:0/20:4),Glycerophosphoethanolamine
+536_PC(35:4)_PC(17:1/18:3),Glycerophosphoethanolamine
+537_PE(38:3p)_PE(18:0p/20:3),Glycerophosphoethanolamine
+538_PE(38:3p)_PE(18:0p/20:3)isomer,Glycerophosphoethanolamine
+539_PE(38:3p)_PE(16:0p/22:3),Glycerophosphoethanolamine
+540_PE(38:3p)_PE(38:3p),Glycerophosphoethanolamine
+541_PC(35:3)_PC(17:0/18:3),Glycerophosphoethanolamine
+542_PC(35:3)_PC(35:3),Glycerophosphoethanolamine
+543_PI(34:1)_PI(16:0/18:1),Glycerophosphoethanolamine
+544_PC(35:2)_PC(35:2),Glycerophosphoethanolamine
+545_PC(35:2)_PC(17:0/18:2),Glycerophosphoethanolamine
+546_TG(40:0)_TG(16:0/12:0/12:0)/TG(12:0/14:0/14:0),Glycerophosphoethanolamine
+547_PC(35:1)_PC(35:1),Glycerophosphoethanolamine
+548_PE(38:1)_PE(38:1),Glycerophosphoethanolamine
+549_Cer(d43:1)_Cer(d18:1/25:0),Glycerophosphoethanolamine
+550_SM(d38:1)_SM(d38:1),Glycerophosphoethanolamine
+551_PS(38:4)_PS(20:4/18:0),Glycerophosphoethanolamine
+552_PC(36:5p)_PC(16:0p/20:5),Glycerophosphoethanolamine
+553_PC(36:5)_PC(16:0/20:5),Glycerophosphoglycerol
+554_PC(36:5)_PC(18:3/18:2),Glycerophosphoglycerol
+555_PC(36:4p)/PC(36:5e)_PC(36:4p)/PC(36:5e),Glycerophosphoglycerol
+556_PC(36:4)_PC(16:0/20:4),Glycerophosphoglycerol
+557_PC(36:4)_PC(18:2/18:2),Glycerophosphoglycerol
+558_PC(36:3p)/PC(36:4e)_PC(36:3p)/PC(36:4e),Glycerophosphoglycerol
+559_PC(36:4e)_PC(36:4e),Glycerophosphoglycerol
+560_PC(36:3)_PC(18:0/18:3),Glycerophosphoglycerol
+561_PC(36:3)_PC(16:0/20:3),Glycerophosphoglycerol
+562_PC(36:3)_PC(18:1/18:2),Glycerophosphoglycerol
+563_PC(36:2p)_PC(36:2p)mixture,Glycerophosphoglycerol
+564_PC(36:2)_PC(18:0/18:2),Glycerophosphoglycerol
+565_PC(36:2)_PC(18:1/18:1),Glycerophosphoglycerol
+566_PC(36:2)_PC(18:1/18:1),Glycerophosphoglycerol
+567_PC(36:2e)_PC(36:2e),Glycerophosphoglycerol
+568_PC(36:1p)_PC(18:0p/18:1),Glycerophosphoglycerol
+569_PC(36:1)_PC(18:0/18:1),Glycerophosphoglycerol
+570_Cer(d44:1)_Cer(d18:1/26:0),Glycerophosphoglycerol
+571_PC(36:1e)_PC(36:1e),Glycerophosphoglycerol
+572_PE(40:6p)_PE(40:6p),Glycerophosphoglycerol
+573_PE(40:5p)_PE(40:5p),Glycerophosphoglycerol
+574_PE(38:6e)_PE(38:6e),Glycerophosphoglycerol
+575_PE(40:5)_PE(18:1/22:4),Glycerophosphoinositol
+576_PE(40:4p)_PE(P-18:0/22:4),Glycerophosphoinositol
+577_PE(40:4)_PE(20:0/20:4),Glycerophosphoinositol
+578_PE(40:4)_PE(18:0/22:4),Glycerophosphoinositol
+579_PI(36:2)_PI(18:0/18:2),Glycerophosphoinositol
+580_PI(36:2)_PI(18:1/18:1),Glycerophosphoinositol
+581_PC(37:3)_PC(37:3),Glycerophosphoinositol
+582_TG(42:1)_TG(14:0/14:1/14:0),Glycerophosphoinositol
+583_PI(36:1)_PI(18:1/18:0),Glycerophosphoinositol
+584_PE(40:2)_PE(18:1/22:1),Glycerophosphoinositol
+585_PC(37:2)_PC(37:2)mixture,Glycerophosphoinositol
+586_TG(42:0)_TG(16:0/12:0/14:0),Glycerophosphoinositol
+587_PI(36:0)_PI(18:0/18:0),Glycerophosphoinositol
+588_PC(37:1)_PC(19:1/18:0),Glycerophosphoinositol
+589_SM(d40:2)_SM(d40:2)2,Glycerophosphoinositol
+590_SM(d40:2)_SM(d40:2)1,Glycerophosphoinositol
+591_SM(d40:1)_SM(d40:1),Glycerophosphoinositol
+592_SM(d40:0)_SM(d40:0),Glycerophosphoinositol
+593_PC(38:7)_PC(16:1/22:6),Glycerophosphoinositol
+594_PC(38:6p)_PC(38:6p),Glycerophosphoinositol
+595_PC(38:6)_PC(18:2/20:4),Glycerophosphoinositol
+596_PC(38:6)_PC(16:0/22:6),Glycerophosphoinositol
+597_PS(40:4)_PS(18:0/22:4),Glycerophosphoinositol
+598_PC(38:6e)_PC(38:6e),Glycerophosphoinositol
+599_PC(38:5)_PC(18:1/20:4),Glycerophosphoinositol
+600_PC(38:5)_PC(38:5),Glycerophosphoinositol
+601_PC(38:4p)_PC(38:4p),Glycerophosphoserine
+602_PC(38:4)_PC(18:1/20:3),Glycerophosphoserine
+603_PC(38:4)_PC(18:0/20:4),Glycerophosphoserine
+604_PC(38:4e)_PC(16:0e/22:4),Glycerophosphoserine
+605_PC(38:4e)_PC(38:4e),Glycerophosphoserine
+606_PC(38:3)_PC(18:1/20:2),Glycerophosphoserine
+607_PC(38:3)_PC(18:0/20:3),Glycerophosphoserine
+608_PC(38:3e)_PC(38:3e),Glycerophosphoserine
+609_TG(43:0)_TG(15:0/12:0/16:0),Glycerophosphoserine
+610_PC(38:1)_PC(22:0/16:1),Glycerophosphoserine
+611_SM(d41:2)_SM(d41:2)2,Glycerophosphoserine
+612_SM(d41:2)_SM(d41:2)1,Glycerophosphoserine
+613_SM(d41:1)_SM(d41:1),Lysoglycerophosphatidylcholine
+614_PI(38:5)_PI(18:1/20:4),Lysoglycerophosphatidylcholine
+615_PI(38:4)_PI(18:0/20:4),Lysoglycerophosphatidylcholine
+616_PC(39:5)_PC(39:5),Lysoglycerophosphatidylcholine
+617_TG(44:3)_TG(16:0/10:0/18:3),Lysoglycerophosphatidylcholine
+618_TG(44:3)_TG(14:1/16:1/14:1),Lysoglycerophosphatidylcholine
+619_PI(38:3)_PI(18:0/20:3),Lysoglycerophosphatidylcholine
+620_TG(44:2)_TG(14:1/16:0/14:1),Lysoglycerophosphatidylcholine
+621_TG(44:2)_TG(16:0/10:0/18:2),Lysoglycerophosphatidylinositol
+622_TG(44:1)_TG(14:0/16:1/14:0)/TG(16:0/10:0/18:1),Lysoglycerophosphatidylinositol
+623_TG(44:0)_TG(16:0/14:0/14:0),Neutral glycosphingolipid
+624_SM(d42:3)_SM(d42:3),Neutral glycosphingolipid
+625_SM(d42:2)_SM(d42:2),Neutral glycosphingolipid
+626_SM(d42:2)_SM(d18:1/24:1),Neutral glycosphingolipid
+627_SM(d42:1)_SM(d42:1)2,Neutral glycosphingolipid
+628_PC(40:7p)_PC(40:7p),Neutral glycosphingolipid
+629_PC(40:7)_PC(18:1/22:6),Neutral glycosphingolipid
+630_PC(40:6p)_PC(40:6p),Organic acid
+631_PC(40:6p)_PC(18:0p/22:6),Organic acid
+632_PC(40:5p)_PC(40:5p),Organic acid
+633_PC(40:6e)_PC(40:6e),Organic acid
+634_PC(40:5)_PC(18:1/22:4),Organic acid
+635_PC(40:5)_PC(18:0/22:5)/PC(20:1/20:4),Organic acid
+636_TG(45:3)_TG(15:1/15:1/15:1),Organic acid
+637_PC(40:5e)_PC(40:5e),Organic acid
+638_PC(40:4)_PC(18:0/22:4),Organic acid
+639_PC(40:4)_PC(18:2/22:2),Organic acid
+640_PC(40:4)_PC(18:1/22:3),Organic acid
+641_TG(45:2)_TG(15:0/16:1/14:1),Organic acid
+642_PC(40:3p)_PC(40:3p),Organic acid
+643_TG(45:1)_TG(15:0/14:1/16:0),Organic acid
+644_SM(d43:4)_SM(d43:4),Organic acid
+645_TG(45:0)_TG(15:0/14:0/16:0),Organic acid
+646_GlcCer(d42:1)_GlcCer(d18:1/24:0),Organic acid
+647_SM(d43:1)_SM(d43:1),Other
+648_TG(46:5)_TG(10:0/18:2/18:3),Other
+649_PI(40:5)_PI(18:0/22:5),Other
+650_TG(46:4)_TG(10:0/18:2/18:2),Other
+651_PI(40:4)_PI(18:0/22:4),Other
+652_TG(46:3)_TG(16:0/12:0/18:3)/TG(14:0/18:2/14:1),Other
+653_TG(46:3)_TG(10:0/18:1/18:2),Other
+654_TG(46:2)_TG(10:0/18:1/18:1),Other
+655_TG(46:2)_TG(16:1/14:0/16:1),Peptide
+656_TG(46:2)_TG(14:0/18:1/14:1),Peptide
+657_TG(46:2)_TG(16:0/12:0/18:2),Peptide
+658_TG(46:1)_TG(16:0/14:0/16:1),Peptide
+659_TG(46:0)_TG(16:0/14:0/16:0),Peptide
+660_TG(47:3)_TG(12:0/17:1/18:2),Peptide
+661_TG(47:3)_TG(12:0/17:0/18:3),Peptide
+662_TG(47:2)_TG(14:0/15:0/18:2),Peptide
+663_TG(47:2)_TG(12:0/18:1/17:1),Peptide
+664_TG(47:1)_TG(14:0/15:0/18:1),Purine&Pyrimidine
+665_TG(47:0)_TG(15:0/16:0/16:0),Purine&Pyrimidine
+666_TG(47:0)_TG(14:0/16:0/17:0),Purine&Pyrimidine
+667_TG(48:4)_TG(12:0/18:1/18:3),Purine&Pyrimidine
+668_TG(48:3)_TG(18:1/12:0/18:2),Purine&Pyrimidine
+669_TG(48:3)_TG(14:0/18:3/16:0),Purine&Pyrimidine
+670_TG(48:2)_TG(16:1/14:0/18:1),Purine&Pyrimidine
+671_TG(48:2)_TG(16:0/14:0/18:2),Purine&Pyrimidine
+672_TG(48:1)_TG(16:0/14:0/18:1),Purine&Pyrimidine
+673_TG(48:1e)_TG(16:0e/16:0/16:1),Purine&Pyrimidine
+674_TG(48:0)_TG(16:0/16:0/16:0),Purine&Pyrimidine
+675_TG(49:0)_TG(16:0/16:0/17:0),Purine&Pyrimidine
+676_TG(49:4)_TG(14:0/20:4/15:0)mixture,Purine&Pyrimidine
+677_TG(49:4)_TG(14:0/17:1/18:3)mixture,Purine&Pyrimidine
+678_TG(49:3)_TG(15:0/16:0/18:3),Purine&Pyrimidine
+679_TG(49:3)_TG(15:0/16:1/18:2),Purine&Pyrimidine
+680_TG(49:2)_TG(15:0/16:1/18:1),Purine&Pyrimidine
+681_TG(49:2)_TG(15:0/16:0/18:2),Purine&Pyrimidine
+682_TG(49:1)_TG(49:1),Purine&Pyrimidine
+683_TG(49:1)_TG(15:0/16:0/18:1),Purine&Pyrimidine
+684_TG(50:1)_TG(16:0/16:0/18:1),Purine&Pyrimidine
+685_TG(50:0)_TG(18:0/16:0/16:0),Purine&Pyrimidine
+686_TG(50:6)_TG(14:0/18:3/18:3),Purine&Pyrimidine
+687_TG(50:5)_TG(14:0/18:2/18:3)mixture,Purine&Pyrimidine
+688_TG(50:4)_TG(16:0/16:1/18:3),Purine&Pyrimidine
+689_TG(50:4)_TG(18:2/14:0/18:2),Purine&Pyrimidine
+690_TG(50:3)_TG(16:0/16:0/18:3),Purine&Pyrimidine
+691_TG(50:3)_TG(16:1/16:1/18:1),Purine&Pyrimidine
+692_TG(50:2)_TG(16:0/16:0/18:2),Purine&Pyrimidine
+693_TG(50:2)_TG(16:0/16:1/18:1),Purine&Pyrimidine
+694_TG(50:2)_TG(18:1/14:0/18:1),Purine&Pyrimidine
+695_TG(51:2)_TG(16:0/17:0/18:2),Sphingomyelin
+696_TG(51:2)_TG(15:0/18:1/18:1),Sphingomyelin
+697_TG(51:2)_TG(16:0/17:1/18:1),Sphingomyelin
+698_TG(51:1)_TG(16:0/17:0/18:1),Sphingomyelin
+699_TG(51:1)_TG(15:0/20:0/16:1),Sphingomyelin
+700_TG(51:0)_TG(18:0/16:0/17:0),Sphingomyelin
+701_TG(51:0)_TG(18:0/16:0/17:0),Sphingomyelin
+702_Coenzyme Q9_Coenzyme Q9,Sphingomyelin
+703_TG(51:5)_TG(15:0/18:2/18:3),Sphingomyelin
+704_TG(51:4)_TG(15:0/18:2/18:2),Sphingomyelin
+705_TG(51:4)_TG(16:0/17:1/18:3),Sphingomyelin
+706_TG(51:3)_TG(16:0/17:0/18:3),Sphingomyelin
+707_TG(51:3)_TG(15:0/18:1/18:2),Sphingomyelin
+708_TG(52:3)_TG(16:1/18:1/18:1),Sphingomyelin
+709_TG(52:3)_TG(16:0/18:1/18:2),Sphingomyelin
+710_TG(52:3)_TG(18:0/16:0/18:3),Sphingomyelin
+711_TG(52:2)_TG(18:0/16:0/18:2),Sphingomyelin
+712_TG(52:2)_TG(16:0/18:1/18:1),Sphingomyelin
+713_TG(52:2e)_TG(16:0/18:2/O-18:0),Sphingomyelin
+714_TG(52:1)_TG(18:0/16:0/18:1),Sphingomyelin
+715_TG(52:1e)_TG(16:0/O-18:0/18:1),Sphingomyelin
+716_TG(52:0)_TG(18:0/16:0/18:0),Sphingomyelin
+717_TG(52:6)_TG(16:1/18:2/18:3),Sphingomyelin
+718_TG(52:6)_TG(14:0/16:0/22:6),Sphingomyelin
+719_TG(52:6)_TG(16:0/18:3/18:3),Sphingomyelin
+720_TG(52:5)_TG(16:0/16:0/20:5),Sphingomyelin
+721_TG(52:5)_TG(16:0/16:1/20:4),Sphingomyelin
+722_TG(52:5)_TG(16:1/18:2/18:2),Sphingomyelin
+723_TG(52:5)_TG(16:0/18:2/18:3),Sphingomyelin
+724_TG(52:4)_TG(16:0/16:0/20:4),Sphingomyelin
+725_TG(52:4)_TG(16:0/18:1/18:3)mixture,Sphingomyelin
+726_TG(53:4)_TG(17:1/18:1/18:2),Sphingomyelin
+727_TG(53:4)_TG(17:0/18:2/18:2)/TG(17:0/18:1/18:3),Sphingomyelin
+728_TG(53:3)_TG(17:0/18:0/18:3),Sphingomyelin
+729_TG(53:3)_TG(17:0/18:1/18:2),Sphingomyelin
+730_TG(53:3)_TG(17:1/18:1/18:1),Sphingomyelin
+731_TG(53:2)_TG(17:0/18:1/18:1),Sphingomyelin
+732_TG(53:1)_TG(15:0/22:0/16:1),Sphingomyelin
+733_TG(53:1)_TG(17:0/18:0/18:1),Triacylglycerol
+734_TG(53:0)_TG(17:0/18:0/18:0),Triacylglycerol
+735_TG(53:7)_TG(17:1/18:3/18:3),Triacylglycerol
+736_TG(53:6)_TG(17:0/18:3/18:3),Triacylglycerol
+737_TG(53:6)_TG(15:0/16:1/22:5),Triacylglycerol
+738_TG(53:5)_TG(17:0/18:2/18:3),Triacylglycerol
+739_TG(53:5)_TG(17:1/18:1/18:3),Triacylglycerol
+740_TG(53:5)_TG(15:0/18:1/20:4),Triacylglycerol
+741_TG(54:5)_TG(18:0/18:2/18:3) ,Triacylglycerol
+742_TG(54:5)_TG(16:0/18:1/20:4),Triacylglycerol
+743_TG(54:5)_TG(18:1/18:1/18:3)/TG(18:1/18:2/18:2),Triacylglycerol
+744_TG(54:4)_TG(18:0/16:0/20:4),Triacylglycerol
+745_TG(54:4)_TG(18:1/18:1/18:2)/TG(18:0/18:2/18:2),Triacylglycerol
+746_TG(54:3)_TG(18:0/18:1/18:2),Triacylglycerol
+747_TG(54:3)_TG(18:1/18:1/18:1),Triacylglycerol
+748_TG(54:3e)_TG(18:2/18:1/O-18:0),Triacylglycerol
+749_TG(54:2)_TG(18:0/18:0/18:2),Triacylglycerol
+750_TG(54:2)_TG(18:0/18:1/18:1),Triacylglycerol
+751_TG(54:2e)_TG(18:1/18:1/O-18:0),Triacylglycerol
+752_TG(54:1)_TG(18:0/18:0/18:1),Triacylglycerol
+753_TG(54:0)_TG(18:0/18:0/18:0),Triacylglycerol
+754_TG(54:7)_TG(18:1/14:0/22:6),Triacylglycerol
+755_TG(54:7)_TG(18:1/18:3/18:3)/TG(18:2/18:2/18:3),Triacylglycerol
+756_TG(54:6)_TG(18:0/18:3/18:3),Triacylglycerol
+757_TG(54:6)_TG(18:1/18:2/18:3)/TG(18:2/18:2/18:2),Triacylglycerol
+758_TG(54:6)_TG(16:0/18:1/20:5),Triacylglycerol
+759_TG(55:6)_TG(17:0/18:2/20:4)mixture,Triacylglycerol
+760_TG(55:6)_TG(19:1/18:2/18:3),Triacylglycerol
+761_TG(55:5)_TG(19:1/18:1/18:3),Triacylglycerol
+762_TG(55:5)_TG(19:0/18:2/18:3),Triacylglycerol
+763_TG(55:4)_TG(19:0/18:1/18:3)/TG(19:0/18:2/18:2),Triacylglycerol
+764_TG(55:4)_TG(19:1/18:1/18:2),Triacylglycerol
+765_TG(55:3)_TG(18:0/19:0/18:3),Triacylglycerol
+766_TG(55:3)_TG(19:0/18:1/18:2),Triacylglycerol
+767_TG(55:3)_TG(19:1/18:1/18:1),Triacylglycerol
+768_TG(55:2)_TG(19:0/18:1/18:1)/TG(19:0/18:0/18:2),Triacylglycerol
+769_TG(55:2)_TG(15:0/20:1/20:1),Triacylglycerol
+770_TG(55:1)_TG(18:0/18:1/19:0),Triacylglycerol
+771_TG(55:8)_TG(15:0/18:2/22:6),Triacylglycerol
+772_TG(55:7)_TG(15:0/18:1/22:6),Triacylglycerol
+773_TG(56:7)_TG(16:0/18:1/22:6),Triacylglycerol
+774_TG(56:7)_TG(18:1/18:2/20:4),Triacylglycerol
+775_TG(56:6)_TG(18:0/18:2/20:4)/TG(18:1/18:1/20:4),Triacylglycerol
+776_TG(56:5)_TG(18:1/18:1/20:3),Triacylglycerol
+777_TG(56:5)_TG(18:1/18:2/20:2),Triacylglycerol
+778_TG(56:5)_TG(18:0/18:1/20:4),Triacylglycerol
+779_TG(56:4)_TG(18:0/18:0/20:4),Triacylglycerol
+780_TG(56:4)_TG(18:1/18:1/20:2),Triacylglycerol
+781_TG(56:4)_TG(20:0/18:1/18:3),Triacylglycerol
+782_TG(56:4)_TG(18:0/18:1/20:3),Triacylglycerol
+783_GM3(d36:1)_GM3(d36:1),Triacylglycerol
+784_TG(56:3)_TG(18:1/18:1/20:1),Triacylglycerol
+785_TG(56:3)_TG(20:0/18:2/18:1)/TG(18:0/18:0/20:3),Triacylglycerol
+786_TG(56:2)_TG(20:0/18:1/18:1)/TG(18:0/18:2/20:0),Triacylglycerol
+787_TG(56:1)_TG(18:0/18:1/20:0),Triacylglycerol
+788_TG(56:0)_TG(16:0/16:0/24:0),Triacylglycerol
+789_Coenzyme Q10_Coenzyme Q10,Triacylglycerol
+790_TG(56:10)_TG(16:1/18:3/22:6),Triacylglycerol
+791_TG(57:3)_TG(18:1/18:1/21:1),Triacylglycerol
+792_TG(57:2)_TG(15:0/18:1/24:1),Triacylglycerol
+793_TG(57:1)_TG(15:0/20:0/22:1),Triacylglycerol
+794_TG(58:7)_TG(18:1/20:2/20:4),Triacylglycerol
+795_TG(58:6)_TG(18:1/18:1/22:4),Triacylglycerol
+796_TG(58:5)_TG(18:0/18:1/22:4),Triacylglycerol
+797_TG(58:5)_TG(14:0/22:1/22:4)),Triacylglycerol
+798_TG(58:5)_TG(18:1/18:1/22:3),Triacylglycerol
+799_TG(58:4)_TG(14:0/20:4/24:0),Triacylglycerol
+800_TG(58:4)_TG(22:0/18:2/18:2),Triacylglycerol
+801_TG(58:3)_TG(18:1/18:1/22:1),Triacylglycerol
+802_TG(58:2)_TG(16:0/18:2/24:0),Triacylglycerol
+803_TG(58:2)_TG(18:1/18:1/22:0),Triacylglycerol
+804_TG(58:1)_TG(16:0/18:1/24:0),Triacylglycerol
+805_TG(58:0)_TG(18:0/16:0/24:0),Triacylglycerol
+806_TG(59:3)_TG(22:1/15:0/22:2),Triacylglycerol
+807_TG(59:1)_TG(15:0/22:1/22:0),Triacylglycerol
+808_TG(60:5)_TG(24:1/18:2/18:2),Triacylglycerol
+809_TG(60:4)_TG(24:0/18:2/18:2),Triacylglycerol
+810_TG(60:3)_TG(20:1/20:1/20:1),Triacylglycerol
+811_TG(60:3)_TG(18:1/18:1/24:1),Triacylglycerol
+812_TG(60:2)_TG(18:0/18:2/24:0)mixture,Triacylglycerol
+813_TG(60:1)_TG(18:0/18:1/24:0),Triacylglycerol
+814_TG(60:0)_TG(26:0/16:0/18:0),Triacylglycerol
+815_TG(62:13)_TG(20:3/20:4/22:6),Triacylglycerol
+816_TG(62:13)_TG(18:1/22:6/22:6),Triacylglycerol
+817_TG(62:4)_TG(16:0/22:4/24:0),Unannotated
+818_TG(62:3)_TG(26:1/18:1/18:1),Unannotated
+819_TG(62:2)_TG(16:0/22:2/24:0),Unannotated
+820_TG(62:1)_TG(20:0/18:0/24:1),Unannotated
+821_TG(64:3)_TG(26:1/18:1/20:1),Unannotated
+822_CL(70:7)_CL(18:3/18:2/18:2/16:0),Unannotated
+823_CL(70:6)_CL(18:2/16:1/18:2/18:1),Unannotated
+824_CL(72:9)_CL(18:3/18:2/18:2/18:2),Unannotated
+825_CL(72:8)_CL(18:2/16:0/20:4/18:2),Unannotated
+826_CL(72:7)_CL(20:4/16:1/18:1/18:1),Unannotated
+827_CL(72:7)_CL(18:2/18:1/18:2/18:2),Unannotated
+828_CL(72:6)_CL(18:2/18:1/18:1/18:2),Unannotated
+829_CL(72:5)_CL(18:2/18:1/18:1/18:1),Unannotated

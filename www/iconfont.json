@@ -1,0 +1,177 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1727596",
+      "name": "409折线图-线性",
+      "font_class": "zhexiantu-xianxing",
+      "unicode": "e904",
+      "unicode_decimal": 59652
+    },
+    {
+      "icon_id": "1782878",
+      "name": "机器学习",
+      "font_class": "jiqixuexi",
+      "unicode": "e6a9",
+      "unicode_decimal": 59049
+    },
+    {
+      "icon_id": "3120818",
+      "name": "volcano",
+      "font_class": "volcano",
+      "unicode": "e66a",
+      "unicode_decimal": 58986
+    },
+    {
+      "icon_id": "3266613",
+      "name": "PathWay富集分析",
+      "font_class": "PathWayfujifenxi",
+      "unicode": "e623",
+      "unicode_decimal": 58915
+    },
+    {
+      "icon_id": "5958399",
+      "name": "learn 机器学习",
+      "font_class": "learn",
+      "unicode": "e8c8",
+      "unicode_decimal": 59592
+    },
+    {
+      "icon_id": "6426987",
+      "name": "挖掘",
+      "font_class": "wajue",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    },
+    {
+      "icon_id": "7421786",
+      "name": "基因富集",
+      "font_class": "jiyinfuji",
+      "unicode": "e704",
+      "unicode_decimal": 59140
+    },
+    {
+      "icon_id": "8171588",
+      "name": "期待",
+      "font_class": "qidaicopy",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "9235607",
+      "name": "基因功能富集分析",
+      "font_class": "jiyingongnengfujifenxi",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "9833309",
+      "name": "数据挖掘",
+      "font_class": "shujuwajue",
+      "unicode": "e916",
+      "unicode_decimal": 59670
+    },
+    {
+      "icon_id": "10380664",
+      "name": "柱线图",
+      "font_class": "zhuxiantu",
+      "unicode": "e66b",
+      "unicode_decimal": 58987
+    },
+    {
+      "icon_id": "10883210",
+      "name": "箱线图",
+      "font_class": "xiangxiantu",
+      "unicode": "e8b6",
+      "unicode_decimal": 59574
+    },
+    {
+      "icon_id": "15554623",
+      "name": "icon_相关性分析",
+      "font_class": "icon_xiangguanxingfenxi",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "15616988",
+      "name": "grid",
+      "font_class": "grid",
+      "unicode": "e887",
+      "unicode_decimal": 59527
+    },
+    {
+      "icon_id": "15872322",
+      "name": "南丁格尔玫瑰图",
+      "font_class": "nandinggeermeiguitu",
+      "unicode": "e851",
+      "unicode_decimal": 59473
+    },
+    {
+      "icon_id": "16359315",
+      "name": "海关监管-库存差异分析",
+      "font_class": "haiguanjianguan-kucunchayifenxi",
+      "unicode": "e7bf",
+      "unicode_decimal": 59327
+    },
+    {
+      "icon_id": "16885669",
+      "name": "回归模型",
+      "font_class": "huiguimoxing",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "17934990",
+      "name": "相关系数矩阵",
+      "font_class": "xiangguanxishujuzhen",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "18039230",
+      "name": "scatter",
+      "font_class": "scatter",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "19477750",
+      "name": "质量控制图",
+      "font_class": "zhiliangkongzhitu",
+      "unicode": "ea6a",
+      "unicode_decimal": 60010
+    },
+    {
+      "icon_id": "19709935",
+      "name": "箱线图",
+      "font_class": "boxplot",
+      "unicode": "ebd6",
+      "unicode_decimal": 60374
+    },
+    {
+      "icon_id": "22829976",
+      "name": "水平柱状图",
+      "font_class": "shuipingzhuzhuangtu",
+      "unicode": "e645",
+      "unicode_decimal": 58949
+    },
+    {
+      "icon_id": "26700013",
+      "name": "geometric scaling",
+      "font_class": "a-geometricscaling",
+      "unicode": "e82d",
+      "unicode_decimal": 59437
+    },
+    {
+      "icon_id": "26875418",
+      "name": "主成分分析（PCA）",
+      "font_class": "a-zhuchengfenfenxiPCA",
+      "unicode": "e6c1",
+      "unicode_decimal": 59073
+    }
+  ]
+}
