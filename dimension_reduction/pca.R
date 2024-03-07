@@ -991,7 +991,7 @@ dimensionReductionPCAServer <- function(input, output, session) {
   observeEvent(input$execute, {
     tryCatch({
       if (is.null(dataset)) {
-        toastr_warning(title = "请上传代谢物峰值数据")
+        toastr_warning(title = "Please upload metabolite matrix data!", message = '')
       } else {
         shinyjs::show("preprocessed-data")
         shinyjs::show("result-scoreplot")

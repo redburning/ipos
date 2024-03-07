@@ -15,6 +15,7 @@ source('bioinfo_mining/bioinfo_mining.R', encoding = "UTF-8")
 source('correlation_net/correlation_net.R', encoding = "UTF-8")
 source('biomarker_selection/biomarker_selection.R', encoding = "UTF-8")
 source('dimension_reduction/pca.R', encoding = "UTF-8")
+source('dimension_reduction/opls.R', encoding = "UTF-8")
 
 jscode <- "
 shinyjs.showHomeBg = function() {
@@ -216,7 +217,7 @@ header <- dashboardHeader(
   title = div(HTML(paste0('<a id="', "btn_home",'" href="#" class="action-button">
                             <div>
                               <div>
-                                <img src="logo-IPOS-v2.12.0.png", height=35, align="center">
+                                <img src="logo-IPOS-v3.3.0.png", height=35, align="center">
                               </div>
                             </div>
                           </a>'))
@@ -242,16 +243,16 @@ header <- dashboardHeader(
 )
 
 customLogo <- shinyDashboardLogoDIY(
-  boldText = "IPOS",
+  boldText = "iPOS",
   mainText = "",
   textSize = 18,
-  badgeText = "v2.12.0",
+  badgeText = "v3.3.0",
   badgeTextColor = "white",
   badgeTextSize = 2,
   badgeBackColor = "#40E0D0",
   badgeBorderRadius = 3
 )
-# header <- dashboardHeader(title = customLogo)
+#header <- dashboardHeader(title = customLogo)
 
 # sidebar
 sidebar <- dashboardSidebar(
@@ -403,8 +404,8 @@ server <- function(input, output, session) {
                             </a>
                        </li>"),
                   menuItem(text = "多元降维", startExpanded = FALSE, icon = icon("magnifying-glass-chart"),
-                           menuSubItem(text = "PCA", tabName = "dimension_reduction", icon = NULL)
-                           # menuSubItem(text = "OPLS" , tabName = "dimension_reduction_opls", icon = NULL)
+                           menuSubItem(text = "PCA", tabName = "dimension_reduction", icon = NULL),
+                           menuSubItem(text = "OPLS" , tabName = "dimension_reduction_opls", icon = NULL)
                   ),
                   menuItem(text = "扩展坞", startExpanded = FALSE, icon = icon("box"),
                            menuSubItem(text = "相关性热图", tabName = "heatmap", icon = NULL)
@@ -663,6 +664,10 @@ server <- function(input, output, session) {
         tabItem(
           tabName = "dimension_reduction",
           dimensionReductionPCAUI(id = "dimension_reduction")
+        ),
+        tabItem(
+          tabName = "dimension_reduction_opls",
+          dimensionReductionOPLSUI(id = "dimension_reduction_opls")
         )
       )
     })
@@ -720,6 +725,7 @@ server <- function(input, output, session) {
   callModule(correlationNetServer, "correlation_net")
   callModule(biomarkerSelectionServer, "biomarker_selection")
   callModule(dimensionReductionPCAServer, "dimension_reduction")
+  callModule(dimensionReductionOPLSServer, "dimension_reduction_opls")
 }
 
 shinyApp(ui, server)

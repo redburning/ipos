@@ -1045,10 +1045,12 @@ table.reference th {
 
 table.dataTable>thead .sorting:before {
   bottom: unset !important;
+  top: 0.4em;
 }
 
 table.dataTable>thead .sorting:after {
   bottom: unset !important;
+  top: 0.4em;
 }
 
 .btn-file {
@@ -1207,4 +1209,220 @@ table.dataTable>thead .sorting:after {
 
 #dimension_reduction_pca-select_data_group-label {
   display: none;
+}
+
+#shiny-tab-dimension_reduction_opls .box-header {
+  background-color: #6bd76b;
+}
+
+#shiny-tab-dimension_reduction_opls .box-header .box-title {
+  color: white;
+}
+
+#shiny-tab-dimension_reduction_opls .box.box-solid>.box-header>.box-tools .btn {
+  color: white;
+}
+
+#theme-settings-opls-viploilipopplot .checkbox {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_viploilipopplot_legend_position-label {
+  display: none !important;
+}
+
+#dimension_reduction_opls-opls_splot_legend_position-label {
+  display: none !important;
+}
+
+#dimension_reduction_opls-opls_vip_bubble_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+table.dataTable>thead {
+  font-size: 12px !important;
+}
+
+table.dataTable>thead>tr>th {
+  white-space: nowrap !important;
+}
+
+table.dataTable>tbody>tr>td {
+  white-space: nowrap !important;
+}
+
+
+#theme-settings-opls-viploilipopplot .checkbox {
+  margin-top: 0px !important;
+}
+
+.checkbox label {
+  display: flex;
+  align-items: center;
+}
+
+#dimension_reduction_opls-opls_viploilipopplot_legend_position-label {
+  display: none !important;
+}
+
+#dimension_reduction_opls-opls_splot_legend_position-label {
+  display: none !important;
+}
+
+table.dataTable>thead {
+  font-size: 12px !important;
+}
+
+table.dataTable>thead>tr>th {
+  white-space: nowrap !important;
+}
+
+table.dataTable>tbody>tr>td {
+  white-space: nowrap !important;
+}
+
+
+/* Drawer样式 */
+.drawer {
+    position: fixed;
+    width: 1200px;
+    height: 100%;
+    top: 0;
+    right: -1200px;
+    background-color: white;
+    z-index: 1999;
+    transition: right 0.3s ease;
+    pointer-events: none; /* 初始状态下禁用交互 */
+}
+
+/* 遮罩层样式（用于禁用背景交互） */
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(1px);
+    background-color: rgba(208, 209, 211, 0.24) !important; /* 可根据需要调整透明度 */
+    z-index: 1998; /* 设置为低于抽屉的z-index */
+    display: none;
+}
+
+/* 激活Drawer的按钮样式 */
+.drawer-toggle {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+}
+
+/* JavaScript添加/移除class来打开/关闭抽屉和遮罩层 */
+.drawer-open {
+    right: 0;
+    pointer-events: auto; /* 激活抽屉时启用交互 */
+    box-shadow: rgba(24, 26, 27, 0.18) 0px 13px 20px 1px;
+}
+
+.overlay-active {
+    display: block;
+}
+
+#dimension_reduction_opls-opls_vip_bubble_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_vip_bubble_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_vip_bubble_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_splot_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_splot_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_splot_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_vplot_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_vplot_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_vplot_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_permutationplot_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_permutationplot_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_permutationplot_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_viploilipop_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_viploilipop_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_viploilipop_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_bioplot_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_bioplot_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_bioplot_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_loadingplot_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_loadingplot_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_loadingplot_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-opls_scoreplot_data div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_scoreplot_data div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls-opls_scoreplot_data table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls-select_data_group-label {
+  display: none !important;
 }
