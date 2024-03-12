@@ -246,7 +246,7 @@ drawClassEnrichPlot <- function(dataset, variable_class_fulllist, pValueFilter =
   })
 }
 
-drawTtestBoxPlot <- function(data, group_test, group_control, logtransform = FALSE, variable, palettename, withpoint = FALSE) {
+drawTtestBoxPlot <- function(type, data, group_test, group_control, logtransform = FALSE, variable, palettename, withpoint = FALSE) {
   tryCatch({
     # 是否log变换
     if (logtransform == TRUE) {
@@ -265,8 +265,21 @@ drawTtestBoxPlot <- function(data, group_test, group_control, logtransform = FAL
     data <- subset(data, (data[1] == group_control) | (data[1] == group_test))
     data_test <- subset(data, data[1] == group_test)
     data_control <- subset(data, data[1] == group_control)
-    ttest <- t.test(data_test[[variable]], data_control[[variable]], alternative = "two.sided", paired = FALSE, var.equal = TRUE)
-    subtitle <- paste0(group_test, " v.s. ", group_control, ": ", format(ttest$p.value, scientific = TRUE))
+    # ttest <- t.test(data_test[[variable]], data_control[[variable]], alternative = "two.sided", paired = FALSE, var.equal = TRUE)
+    
+    # 计算p-value
+    pvalue <- NULL
+    if (type == 'ttest') {
+      result <- t.test(data_test[[variable]], data_control[[variable]], alternative = "two.sided", paired = FALSE, var.equal = TRUE)
+      pvalue <- result$p.value
+    } else if (type == 'pair') {
+      result <- t.test(data_test[[variable]], data_control[[variable]], alternative = "two.sided", paired = TRUE, var.equal = TRUE)
+      pvalue <- result$p.value
+    } else if (type == 'wilcox') {
+      result <- wilcox.test(data_test[[variable]], data_control[[variable]], alternative = "two.sided", paired = FALSE)
+      pvalue <- result$p.value
+    }
+    subtitle <- paste0(group_test, " v.s. ", group_control, ": ", format(pvalue, scientific = TRUE))
     
     palette <- NULL
     n <- length(unique(data[[1]]))
@@ -607,7 +620,7 @@ drawTtestZScorePlot <- function(data, ttest_result, group_control, group_test, l
 }
 
 
-ttest <- function(data, mapping, classA, classB, logtransform) {
+dotest <- function(type, data, mapping, classA, classB, logtransform) {
   # 保留一份原始数据备份, foldchange计算需要用到
   dataorig <- data
   if (logtransform == TRUE) {
@@ -627,8 +640,17 @@ ttest <- function(data, mapping, classA, classB, logtransform) {
   foldchange <- c()
   for(i in 2:length(colnames(data))) {
     varname <- colnames(data)[i]
-    ttest <- t.test(data_a[[varname]], data_b[[varname]], alternative = "two.sided", paired = FALSE, var.equal = TRUE)
-    pvalue <- append(pvalue, ttest$p.value)
+    if (type == 'ttest') {
+      result <- t.test(data_a[[varname]], data_b[[varname]], alternative = "two.sided", paired = FALSE, var.equal = TRUE)
+      pvalue <- append(pvalue, result$p.value)
+    } else if (type == 'pair') {
+      result <- t.test(data_a[[varname]], data_b[[varname]], alternative = "two.sided", paired = TRUE, var.equal = TRUE)
+      pvalue <- append(pvalue, result$p.value)
+    } else if (type == 'wilcox') {
+      result <- wilcox.test(data_a[[varname]], data_b[[varname]], alternative = "two.sided", paired = FALSE)
+      pvalue <- append(pvalue, result$p.value)
+    }
+    
     # foldchange算法修正
     # if (logtransform == TRUE) {
     #   foldchange <- append(foldchange, 2^(mean(data_a[[varname]]) - mean(data_b[[varname]])))
@@ -764,10 +786,10 @@ differenceAnalysisUI <- function(id) {
             selectInput(inputId = ns("select_difference_model"),
                         # label = "Difference model",
                         label = "差异分析方法",
-                        choices = c("t-test" = "ttest", "ANOVA" = "anova")),
+                        choices = c("t-test" = "ttest", "pair" = "pair", "Wilcox test" = "wilcox", "ANOVA" = "anova")),
             br(),
             conditionalPanel(
-              condition = "input.select_difference_model == 'ttest'",
+              condition = "input.select_difference_model != 'anova'",
               actionButton(ns("ttest_setting"),
                            label = "参数设置",
                            icon = icon("sliders"),
@@ -781,7 +803,7 @@ differenceAnalysisUI <- function(id) {
                          class = "setting-button"),
           ),
           conditionalPanel(
-            condition = "input.select_difference_model == 'ttest'",
+            condition = "input.select_difference_model != 'anova'",
             mainPanel(
               useShinyjs(),
               width = 10,
@@ -1500,7 +1522,7 @@ differenceAnalysisServer <- function(input, output, session) {
       } else if (is.null(ttest_group_test) || trimws(ttest_group_test) == '') {
         toastr_warning(title = "参数设置有误", message = "未选择测试组")
       } else {
-        if (input$select_difference_model == "ttest") {
+        if (input$select_difference_model != "anova") {
           shinyjs::show("ttestResultParams")
           shinyjs::show("ttestResultTable")
           shinyjs::show("ttestResultBoxplot")
@@ -1508,7 +1530,7 @@ differenceAnalysisServer <- function(input, output, session) {
           shinyjs::show("ttestResultZScoreplot")
           
           # t-test
-          ttest_result <- ttest(dataset, mapping, ttest_group_test, ttest_group_control, logtransform)
+          ttest_result <- dotest(input$select_difference_model, dataset, mapping, ttest_group_test, ttest_group_control, logtransform)
           ttest_result_table <<- ttest_result
           
           ttest_result_params <<- data.frame(param = c("Group setting", "Log2 transform"), 
@@ -1554,22 +1576,10 @@ differenceAnalysisServer <- function(input, output, session) {
             DT::datatable({
               ttest_result_table
             },
-            options = list(bLengthChange = FALSE,
-                           pageLength = 10,
-                           initComplete = JS(
-                             "function(settings, json) {",
-                             "$(this.api().table().body()).css({'font-size': '10px'});",
-                             "$(this.api().table().header()).css({'font-size': '10px'});",
-                             "}"),
-                           columnDefs = list(list(className='dt-left', targets="_all")),
-                           scrollX = TRUE,
-                           scrollY = "400px",
-                           searching = FALSE,
-                           paging = FALSE
-            ),
-            selection = 'multiple',
-            style = 'bootstrap',
-            class = 'cell-border stripe compact',
+            options = dataTableOptions_pageLength25,
+            selection = 'none',
+            style = 'bootstrap4',
+            class = 'cell-border stripe compact datatable',
             rownames = FALSE
             )
           })
@@ -1577,7 +1587,7 @@ differenceAnalysisServer <- function(input, output, session) {
           # t-test result boxplot
           output$ttest_result_boxplot <- renderPlot({
             if (!is.null(input$feature_to_draw_boxplot) && !is.null(ttest_group_test) && !is.null(ttest_group_control)) {
-              ttest_result_boxplot <<- drawTtestBoxPlot(origdataset, ttest_group_test, ttest_group_control, logtransform,
+              ttest_result_boxplot <<- drawTtestBoxPlot(input$select_difference_model, origdataset, ttest_group_test, ttest_group_control, logtransform,
                                                         input$feature_to_draw_boxplot, input$palette_of_ttest_boxplot, input$withpoint_of_ttest_boxplot)
             }
             return(ttest_result_boxplot)
