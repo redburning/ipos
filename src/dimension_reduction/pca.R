@@ -782,7 +782,7 @@ dimensionReductionPCAUI <- function(id) {
                        ))
               ),
               
-              tabPanel(title = "Bio plot",
+              tabPanel(title = "Bi plot",
                        hidden(div(id = ns("result-bioplot"),
                                   fluidRow(
                                     tags$div(
@@ -894,7 +894,7 @@ dimensionReductionPCAUI <- function(id) {
                                             style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
                                             buildAccordionItem(title = 'Title', collapsed = TRUE),
                                             tags$div(class = 'collapse-item-body', style = 'display:none;',
-                                                     textInput(inputId = ns('pca_bioplot_title_text'), label = 'Text', value = 'bioplot'),
+                                                     textInput(inputId = ns('pca_bioplot_title_text'), label = 'Text', value = 'bi-plot'),
                                                      selectInput(inputId = ns('pca_bioplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
                                                      numericInput(inputId = ns('pca_bioplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
                                                      selectInput(inputId = ns('pca_bioplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
@@ -2169,7 +2169,7 @@ dimensionReductionPCAServer <- function(input, output, session) {
   output$export_pca_result_bioplot_ok <- downloadHandler(
     filename = function() {
       if (is.null(input$export_pca_result_bioplot_name) || input$export_pca_result_bioplot_name == "") {
-        paste("bioplot-", format(Sys.time(), "%Y%m%d%H%M%S"), input$export_pca_result_bioplot_format, sep="")
+        paste("biplot-", format(Sys.time(), "%Y%m%d%H%M%S"), input$export_pca_result_bioplot_format, sep="")
       } else {
         paste(input$export_pca_result_bioplot_name, input$export_pca_result_bioplot_format, sep = "")
       }
@@ -2187,7 +2187,7 @@ dimensionReductionPCAServer <- function(input, output, session) {
   # 下载 bioplot 对应的数据
   output$download_pca_bioplot_data <- downloadHandler(
     filename = function() {
-      paste0("pca-bioplot-data.xlsx")
+      paste0("pca-biplot-data.xlsx")
     },
     content = function(file) {
       openxlsx::write.xlsx(pca_result_bioplot_data, file, asTable = TRUE)

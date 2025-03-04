@@ -48,1834 +48,1869 @@ dimensionReductionOPLSUI <- function(id) {
     
     fluidRow(
       box(
-        title = "Upload Data",
-        status = "danger",
-        solidHeader = TRUE,
-        collapsible = TRUE,
-        width = 12,
-        fluidRow(column(width = 2, offset = 10, actionButton(inputId = ns("help_upload"),
-                                                             label = "帮助文档",
-                                                             icon = icon("book"),
-                                                             class = "help-button")
-        )
-        ),
-        fluidRow(
-          column(width = 4,
-                 fileInput(
-                   inputId = ns("dataloader"),
-                   label = "",
-                   buttonLabel = div(icon("folder-open"), " Upload metabolite matrix... "),
-                   placeholder = "Click button to select, or drag file here.",
-                   accept = ".csv"
-                 ),
-                 uiOutput(ns("data_summary_matrix"))
-          ),
-          column(width = 4,
-                 fileInput(
-                   inputId = ns("attachmentloader_sample_group"),
-                   label = "",
-                   buttonLabel = div(icon("folder-open"), " Upload sample grouping data... "),
-                   placeholder = "",
-                   accept = ".csv"
-                 ),
-                 uiOutput(ns("data_summary_sample_class"))
-          ),
-          column(width = 4,
-                 fileInput(
-                   inputId = ns("attachmentloader_var_class"),
-                   label = "",
-                   buttonLabel = div(icon("folder-open"), " Upload metabolite classification data... "),
-                   placeholder = "",
-                   accept = ".csv"
-                 ),
-                 uiOutput(ns("data_summary_variable_class"))
-          )
-          
-        )
-      ),
-      box(
         id = "box-dr-opls",
         title = "OPLS",
         solidHeader = TRUE,
-        collapsible = TRUE,
-        collapsed = TRUE,
+        collapsible = FALSE,
+        collapsed = FALSE,
+        style = "min-height: calc(100vh - 120px); height:auto;",
         width = 12,
-        fluidRow(
+
+        tags$div(
+          style = "display:flex; gap:12px; height:100%;",
+
           tags$div(
-            style = "display:flex; gap:10px; padding-left:15px; padding-right:15px;",
+            id="drawer-dimension_reduction-opls", class="drawer",
+            tags$div(style = "padding:15px 20px 20px 20px;",
+                     tags$div(
+                       style = "padding:10px 10px 30px; border-radius:10px; border:1px solid #dfe1e5; margin-bottom:20px;",
+                       fileInput(
+                         inputId = ns("dataloader"),
+                         label = "",
+                         buttonLabel = div(icon("folder-open"), " Upload metabolite matrix... "),
+                         placeholder = "Click button to select, or drag file here.",
+                         accept = ".csv"
+                       ),
+                       uiOutput(ns("data_summary_matrix")),
+                       tags$div(
+                         id = 'heatmap_help_matrix',
+                         class = 'annotation-area',
+                         tags$h5("What data formats do we support?"),
+                         tags$p("We support the data format where each row represents a variable and each column represents a sample, 
+                            with the first column being the variable names, and the first row being the sample names. As shown in the table below."),
+                         tags$img(src = 'heatmap/heatmap-datasample-matrix.svg', style = 'height:120px')
+                       )
+                     ),
+                     tags$div(
+                       style = "padding:10px 10px 30px; border-radius:10px; border:1px solid #dfe1e5; margin-bottom:20px;",
+                       fileInput(
+                         inputId = ns("attachmentloader_sample_group"),
+                         label = "",
+                         buttonLabel = div(icon("folder-open"), " Upload sample grouping data... "),
+                         placeholder = "Click button to select, or drag file here.",
+                         accept = ".csv"
+                       ),
+                       uiOutput(ns("data_summary_sample_class")),
+                       tags$div(
+                         id = 'heatmap_help_sample_group',
+                         class = 'annotation-area',
+                         tags$p(
+                           "The supplementary table indicating the categories to which the ",
+                           tags$span(style = "color:#1f62e0", "samples"),
+                           " belong."
+                         ),
+                         tags$img(src = 'heatmap/heatmap-datasample-group.svg', style = 'height:100px')
+                       )
+                     ),
+                     tags$div(
+                       style = "padding:10px 10px 30px; border-radius:10px; border:1px solid #dfe1e5; margin-bottom:20px;",
+                       fileInput(
+                         inputId = ns("attachmentloader_var_class"),
+                         label = "",
+                         buttonLabel = div(icon("folder-open"), " Upload metabolite classification data... "),
+                         placeholder = "Click button to select, or drag file here.",
+                         accept = ".csv"
+                       ),
+                       uiOutput(ns("data_summary_variable_class")),
+                       tags$div(
+                         id = 'heatmap_help_variable_class',
+                         class = 'annotation-area',
+                         tags$p(
+                           "The supplementary table indicating the categories to which the ",
+                           tags$span(style = "color:#1f62e0", "variables"),
+                           " belong."
+                         ),
+                         tags$img(src = 'heatmap/heatmap-datasample-class.svg', style = 'height:120px')
+                       )
+                     )
+            )
+          ),
+          tags$div(id="overlay-dimension_reduction-opls", class="overlay",
+                   onclick = onOverlayClick('drawer-dimension_reduction-opls', 'overlay-dimension_reduction-opls')),
+
+          tags$div(
+            style = 'width:250px; height:100%; background-color:white;',
             tags$div(
-              style = 'width:250px',
-              tags$div(
-                style = 'border:1px solid rgba(36, 41, 46, 0.12); border-radius: 5px 5px 0px 0px;',
-                buildAccordionItem('settings-group-selection', 'Grouping Selection'),
-                uiOutput(outputId = ns('groupcol_selection_ui'))
-              ),
-              tags$div(
-                style = 'border:1px solid rgba(36, 41, 46, 0.12); border-top:none;',
-                buildAccordionItem('settings-group-comparison', 'Grouping Comparison'),
-                uiOutput(outputId = ns("groups_selection_ui"))
-              ),
-              tags$div(
-                style = 'border:1px solid rgba(36, 41, 46, 0.12); border-top:none;',
-                buildAccordionItem('settings-data-preparation', 'Data Preparation'),
-                tags$div(id = 'settings-data-preparation', class = 'collapse-item-body', style = 'display:block;',
-                         selectInput(inputId = ns('settings_data_transformation'), label = 'Transformation', choices = c('None', 'Log2', 'Log10'), selected = 'None'),
-                         selectInput(inputId = ns('settings_data_scaling'), label = 'Scaling', choices = c('None', 'Centering', 'Unit Variance scaling', 'Pareto scaling', 'Range scaling', 'Vast scaling', 'Level scaling'), selected = 'None')
-                )
-              ),
-              tags$div(
-                class = 'collapse-item-body',
-                style = 'border:1px solid rgba(36, 41, 46, 0.12); border-top:none; border-radius: 0px 0px 5px 5px; padding-top:12px; padding-bottom:12px;',
-                actionButton(ns("execute"),
-                             label = "Execute",
-                             icon = icon("play"),
-                             class = "action-button-primary"),
+              style = 'border:1px solid rgba(36, 41, 46, 0.12); border-radius: 5px 5px 0px 0px;',
+              buildAccordionItem(title = 'My Data', collapsed = FALSE),
+              tags$div(class = 'collapse-item-body',
+                       # view data
+                       tags$button(class = "action-button-primary", 
+                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                   tags$div(tags$i(class="fas fa-cloud-arrow-up"),
+                                            tags$span("Upload data"), 
+                                   ),
+                                   onclick = onInspectDataBtnClick('drawer-dimension_reduction-opls', 'overlay-dimension_reduction-opls')
+                       ),
               )
             ),
             tags$div(
-              style= "width:calc(100% - 250px)",
-              tabsetPanel(
-                tabPanel(title = "Overview",
-                         icon = icon("sliders"),
-                         hidden(div(id = ns("result-overview"),
-                                    withSpinner(uiOutput(outputId = ns("opls_result_overview")))
-                         ))
-                ),
-                tabPanel(title = "Preprocessed Data",
-                         icon = icon("table"),
-                         hidden(div(id = ns("preprocessed-data"),
-                                    withSpinner(DT::DTOutput(outputId = ns("preprocessed_data"))),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_preprocessed_data"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                tabPanel(title = "Score plot",
-                         icon = tags$i(class = "iconfont icon-a-zhuchengfenfenxiPCA", role="presentation"),
-                         hidden(div(id = ns("result-scoreplot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 250px)',
-                                          withSpinner(plotOutput(outputId = ns("score_plot"),
-                                                                 width = "100%",
-                                                                 height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-scoreplot", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_scoreplot_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_scoreplot_data"))
-                                                   )
-                                          )
-                                        ),
-                                        tags$div(id="overlay-opls-scoreplot", class="overlay", 
-                                                 onclick = onOverlayClick('drawer-opls-scoreplot', 'overlay-opls-scoreplot')),
-                                        
-                                        tags$div(
-                                          style = 'width: 250px; z-index: 200;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            
-                                            # Datapoint settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'datapoint-settings-opls-scoreplot', title = 'Data points', collapsed = TRUE),
-                                              tags$div(id = 'datapoint-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # inspect data
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                   ), 
-                                                                   onclick = onInspectDataBtnClick('drawer-opls-scoreplot', 'overlay-opls-scoreplot')
-                                                       ),
-                                                       selectInput(inputId = ns('opls_scoreplot_datapoint_fillcolor'), label = 'Fill color', selected = 'd3', 
-                                                                   choices = c('d3', 'aaas', 'jama', 'jco', 'lancet', 'locus', 'nejm', 'npg', 'rick', 'simpson', 'startrek', 'tron', 'dark', 'light')),
-                                                       numericInput(inputId = ns('opls_scoreplot_datapoint_fillalpha'), label = 'Fill transparency', min = 0.01, max = 1, step = 0.1, value = 1),
-                                                       selectInput(inputId = ns('opls_scoreplot_datapoint_border_color'), label = 'Border color', selected = 'd3', 
-                                                                   choices = c('d3', 'aaas', 'jama', 'jco', 'lancet', 'locus', 'nejm', 'npg', 'rick', 'simpson', 'startrek', 'tron', 'dark', 'light')),
-                                                       selectInput(inputId = ns('opls_scoreplot_datapoint_shape'), label = 'Shape', choices = c('Circle' = 16, 'Square' = 15, 'Rhomboid' = 18, 'Triangle' = 17)),
-                                                       numericInput(inputId = ns('opls_scoreplot_datapoint_size'), label = 'Size', min = 1, value = 5, step = 1)
-                                              )
-                                            ),
-                                            
-                                            # Confidence interval settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'confidence-settings-opls-scoreplot', title = 'Confidence level', collapsed = TRUE),
-                                              tags$div(id = 'confidence-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       numericInput(inputId = ns('opls_scoreplot_confidence_interval'), label = 'Confidence level', min = 0, max = 1, step = 0.05, value = 0.95),
-                                                       selectInput(inputId = ns('opls_scoreplot_confidence_datacoverage'), label = 'Data coverage', choices = c('For all data' = FALSE, 'For group data' = TRUE)),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'confidence-settings-fill-opls-scoreplot', title = 'Fill'),
-                                                         tags$div(
-                                                           id = 'confidence-settings-fill-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           # 是否填充颜色
-                                                           radioButtons(inputId = ns('opls_scoreplot_confidence_fillornot'), label = '', inline = TRUE, selected = 'noFill', choices = c('No fill' = 'noFill', 'Solid color'= 'solidColor')),
-                                                           # 多分组颜色选择器
-                                                           selectInput(inputId = ns('opls_scoreplot_confidence_fillcolor_multi'), label = 'Color', selected = 'd3', 
-                                                                       choices = c('d3', 'aaas', 'jama', 'jco', 'lancet', 'locus', 'nejm', 'npg', 'rick', 'simpson', 'startrek', 'tron', 'dark', 'light')),
-                                                           # 单分组颜色选择器
-                                                           colourInput(inputId = ns("opls_scoreplot_confidence_fillcolor_single"), label = "Color", value = "grey30",
-                                                                       returnName = TRUE, palette = "limited", closeOnClick = TRUE, allowedCols = c(ColorBrewr$custom)),
-                                                           numericInput(inputId = ns('opls_scoreplot_confidence_fillalpha'), label = 'Transparency', min = 0.01, max = 1, step = 0.1, value = 0.1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'confidence-settings-line-opls-scoreplot', title = 'Border'),
-                                                         tags$div(
-                                                           id = 'confidence-settings-line-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           radioButtons(inputId = ns('opls_scoreplot_confidence_withlineornot'), label = '', choices = c('No border' = 'noLine', 'Solid line' = 'solidLine'), inline = TRUE, selected = 'solidLine'),
-                                                           selectInput(inputId = ns('opls_scoreplot_confidence_linetype'), label = 'Type', selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash', 'blank')),
-                                                           numericInput(inputId = ns('opls_scoreplot_confidence_lineweight'), label = 'Weight', min = 0, max = 1, step = 0.1, value = 0.5),
-                                                           numericInput(inputId = ns('opls_scoreplot_confidence_linealpha'), label = 'Transparency', min = 0.01, max = 1, step = 0.1, value = 1)
-                                                         )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-scoreplot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_scoreplot_title_text'), label = 'Text'),
-                                                       selectInput(inputId = ns('opls_scoreplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_scoreplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_scoreplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-scoreplot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-scoreplot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_scoreplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-scoreplot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_scoreplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-scoreplot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-scoreplot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_scoreplot_xaxis_label'), label = 'Label', value = 't[1]'),
-                                                           selectInput(inputId = ns('opls_scoreplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_scoreplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-scoreplot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_scoreplot_yaxis_label'), label = 'Label', value = 't[2]'),
-                                                           selectInput(inputId = ns('opls_scoreplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_scoreplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-scoreplot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_scoreplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_scoreplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_scoreplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_scoreplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_scoreplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                        )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-scoreplot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_scoreplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_scoreplot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_scoreplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_scoreplot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_scoreplot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                tabPanel(title = "Loading plot",
-                         hidden(div(id = ns("result-loadingplot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 270px)',
-                                          withSpinner(plotOutput(outputId = ns("loading_plot"),
-                                                                 width = "100%",
-                                                                 height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-loadingplot", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_loadingplot_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_loadingplot_data"))
-                                                   )
-                                          )
-                                        ),
-                                        tags$div(id="overlay-opls-loadingplot", class="overlay", 
-                                                 onclick = onOverlayClick('drawer-opls-loadingplot', 'overlay-opls-loadingplot')),
-                                        
-                                        tags$div(
-                                          style = 'width: 270px; z-index:101;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            # Datapoint settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'datapoint-settings-opls-loadingplot', title = 'Data points', collapsed = TRUE),
-                                              tags$div(id = 'datapoint-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # inspect data
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                   ), 
-                                                                   onclick = onInspectDataBtnClick('drawer-opls-loadingplot', 'overlay-opls-loadingplot')
-                                                       ),
-                                                       
-                                                       # point
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'datapoint-point-settings-opls-loadingplot', title = 'Point'),
-                                                         tags$div(
-                                                           id = 'datapoint-point-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           selectInput(inputId = ns('opls_loadingplot_datapoint_fillpalette'), label = 'Fill color', selected = 'd3', 
-                                                                       choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons')),
-                                                           numericInput(inputId = ns('opls_loadingplot_datapoint_fillalpha'), label = 'Fill transparency', min = 0.01, max = 1, step = 0.1, value = 1),
-                                                           selectInput(inputId = ns('opls_loadingplot_datapoint_shape'), label = 'Point shape', selected = '21', 
-                                                                       choices = c('Circle' = '21', 'Square' = '22', 'rhomboid' = '23', 'triangle' = '24')),
-                                                           numericInput(inputId = ns('opls_loadingplot_datapoint_size'), label = 'Size', min = 1, value = 3, step = 1)
-                                                         )
-                                                       ),
-                                                       # h-line
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'hline-settings-opls-loadingplot', title = 'h-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'hline-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_loadingplot_showhline'), value = TRUE, label = 'Show h-line'),
-                                                           numericInput(inputId = ns('opls_loadingplot_hline_value'), label = 'Reference value', step = 0.5, value = 0),
-                                                           numericInput(inputId = ns('opls_loadingplot_hline_size'), label = 'Line width', step = 0.5, value = 0.5),
-                                                           selectInput(inputId = ns('opls_loadingplot_hline_shape'), label = 'Line shape', 
-                                                                       selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_loadingplot_hline_color"), label = "Line color", value = "gray33",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       # v-line
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'vline-settings-opls-loadingplot', title = 'v-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'vline-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_loadingplot_showvline'), value = TRUE, label = 'Show v-line'),
-                                                           numericInput(inputId = ns('opls_loadingplot_vline_value'), label = 'Reference value', step = 0.5, value = 0),
-                                                           numericInput(inputId = ns('opls_loadingplot_vline_size'), label = 'Line width', step = 0.5, value = 0.5),
-                                                           selectInput(inputId = ns('opls_loadingplot_vline_shape'), label = 'Line shape', 
-                                                                       selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_loadingplot_vline_color"), label = "Line color", value = "gray33",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-loadingplot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_loadingplot_title_text'), label = 'Text'),
-                                                       selectInput(inputId = ns('opls_loadingplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_loadingplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_loadingplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-loadingplot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-loadingplot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_loadingplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-loadingplot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_loadingplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-loadingplot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-loadingplot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_loadingplot_xaxis_label'), label = 'Label', value = 't[1]'),
-                                                           selectInput(inputId = ns('opls_loadingplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_loadingplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-loadingplot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_loadingplot_yaxis_label'), label = 'Label', value = 'o[1]'),
-                                                           selectInput(inputId = ns('opls_loadingplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_loadingplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-loadingplot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_loadingplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_loadingplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_loadingplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_loadingplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_loadingplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-loadingplot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_loadingplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_loadingplot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_loadingplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_loadingplot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_loadingplot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                
-                tabPanel(title = "Bio plot",
-                         hidden(div(id = ns("result-bioplot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 270px)',
-                                          withSpinner(plotOutput(outputId = ns("bio_plot"),
-                                                                 width = "100%",
-                                                                 height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-bioplot", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_bioplot_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_bioplot_data"))
-                                                   )
-                                          )
-                                        ),
-                                        tags$div(id="overlay-opls-bioplot", class="overlay", 
-                                                 onclick = onOverlayClick('drawer-opls-bioplot', 'overlay-opls-bioplot')),
-                                        
-                                        tags$div(
-                                          style = 'width: 270px; z-index:101;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            
-                                            # Data settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'data-settings-opls-bioplot', title = 'Data', collapsed = TRUE),
-                                              tags$div(id = 'data-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                   ), 
-                                                                   onclick = onInspectDataBtnClick('drawer-opls-bioplot', 'overlay-opls-bioplot')
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'datapoint-group1-settings-opls-bioplot', 
-                                                                            title = 'Point(group-1)', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'datapoint-group1-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           numericInput(inputId = ns('opls_bioplot_point_group1_size'), label = 'Point size', min = 0.1, step = 0.5, value = 3.5),
-                                                           colourInput(inputId = ns("opls_bioplot_datapoint_group1_fill_color"), label = "Fill color", value = "#D595A7",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           colourInput(inputId = ns("opls_bioplot_datapoint_group1_border_color"), label = "Border color", value = "#575757",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'datapoint-group2-settings-opls-bioplot', 
-                                                                            title = 'Point(group-2)', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'datapoint-group2-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           numericInput(inputId = ns('opls_bioplot_point_group2_size'), label = 'Point size', min = 0.1, step = 0.5, value = 3.5),
-                                                           colourInput(inputId = ns("opls_bioplot_datapoint_group2_fill_color"), label = "Fill color", value = "#009966",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           colourInput(inputId = ns("opls_bioplot_datapoint_group2_border_color"), label = "Border color", value = "#575757",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'hline-settings-opls-bioplot', title = 'h-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'hline-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_bioplot_showhline'), value = TRUE, label = 'Show h-line'),
-                                                           numericInput(inputId = ns('opls_bioplot_hline_value'), label = 'Reference value', step = 0.1, value = 0),
-                                                           numericInput(inputId = ns('opls_bioplot_hline_size'), label = 'Line width', step = 0.1, value = 0.1),
-                                                           selectInput(inputId = ns('opls_bioplot_hline_shape'), label = 'Line shape', 
-                                                                       selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_bioplot_hline_color"), label = "Line color", value = "black",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'vline-settings-opls-bioplot', title = 'v-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'vline-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_bioplot_showvline'), value = TRUE, label = 'Show v-line'),
-                                                           numericInput(inputId = ns('opls_bioplot_vline_value'), label = 'Reference value', step = 0.1, value = 0),
-                                                           numericInput(inputId = ns('opls_bioplot_vline_size'), label = 'Line width', step = 0.1, value = 0.1),
-                                                           selectInput(inputId = ns('opls_bioplot_vline_shape'), label = 'Line shape', 
-                                                                       selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_bioplot_vline_color"), label = "Line color", value = "black",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-bioplot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_bioplot_title_text'), label = 'Text', value = 'bioplot'),
-                                                       selectInput(inputId = ns('opls_bioplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_bioplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_bioplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-bioplot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-bioplot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_bioplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-bioplot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_bioplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-bioplot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-bioplot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_bioplot_xaxis_label'), label = 'Label', value = 'pc(cor)[1], t(cor)[1]'),
-                                                           selectInput(inputId = ns('opls_bioplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_bioplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-bioplot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_bioplot_yaxis_label'), label = 'Label', value = 'pc(cor)[2], t(cor)[2]'),
-                                                           selectInput(inputId = ns('opls_bioplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_bioplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-bioplot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_bioplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_bioplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_bioplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_bioplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_bioplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-bioplot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_bioplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_bioplot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_bioplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_bioplot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_bioplot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                
-                tabPanel(title = "VIP-loilipop plot",
-                         hidden(div(id = ns("result-viploilipopplot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 270px)',
-                                          withSpinner(plotOutput(outputId = ns("viploilipop_plot"),
-                                                                 width = "100%",
-                                                                 height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-vip-loilipop", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_viploilipop_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_viploilipop_data"))
-                                                   )
-                                          )
-                                        ),
-                                        tags$div(id="overlay-opls-vip-loilipop", class="overlay", 
-                                                 onclick = onOverlayClick('drawer-opls-vip-loilipop', 'overlay-opls-vip-loilipop')),
-                                        
-                                        tags$div(
-                                          style = 'width: 270px; z-index:101;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            
-                                            # Data settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'data-settings-opls-viploilipopplot', title = 'Data', collapsed = TRUE),
-                                              tags$div(id = 'data-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                   ), 
-                                                                   onclick = onInspectDataBtnClick('drawer-opls-vip-loilipop', 'overlay-opls-vip-loilipop')
-                                                       ),
-                                                       numericInput(inputId = ns('opls_viploilipopplot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
-                                                       selectInput(inputId = ns('opls_viploilipopplot_sortby'), label = 'Sort by',
-                                                                   choices = c('Metabolite name asc' = 'nameasc',
-                                                                               'Metabolite name desc' = 'namedesc',
-                                                                               'VIP-value asc' = 'vipasc',
-                                                                               'VIP-value desc' = 'vipdesc',
-                                                                               'Original' = 'original'),
-                                                                   selected = 'original'),
-
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'datapoint-settings-opls-viploilipopplot', title = 'Point', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'datapoint-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           numericInput(inputId = ns('opls_viploilipopplot_point_size'), label = 'Point size', min = 0.1, step = 0.1, value = 3.2),
-                                                           checkboxInput(inputId = ns('opls_viploilipopplot_datapoint_class_colorful'), value = FALSE, label = 'Color different classes'),
-                                                           selectInput(inputId = ns('opls_viploilipopplot_datapoint_color_palette'), label = 'Color palette',
-                                                                       choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons'),
-                                                                       selected = 'd3'),
-                                                           colourInput(inputId = ns("opls_viploilipopplot_datapoint_fill_color"), label = "Fill color", value = "#f8766d",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           colourInput(inputId = ns("opls_viploilipopplot_datapoint_border_color"), label = "Border color", value = "#f8766d",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'datasegment-settings-opls-viploilipopplot', title = 'Segment', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'datasegment-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           numericInput(inputId = ns('opls_viploilipopplot_segment_size'), label = 'Line width', value = 0.5, step = 0.1, min = 0),
-                                                           checkboxInput(inputId = ns('opls_viploilipopplot_segment_class_colorful'), value = FALSE, label = 'Color different classes'),
-                                                           selectInput(inputId = ns('opls_viploilipopplot_segment_color_palette'), label = 'Color palette',
-                                                                       choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons'),
-                                                                       selected = 'd3'),
-                                                           colourInput(inputId = ns("opls_viploilipopplot_segment_color"), label = "Color", value = "black",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-viploilipopplot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_viploilipopplot_title_text'), label = 'Text'),
-                                                       selectInput(inputId = ns('opls_viploilipopplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_viploilipopplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_viploilipopplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-viploilipopplot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-viploilipopplot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_viploilipopplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-viploilipopplot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_viploilipopplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-viploilipopplot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-viploilipopplot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_viploilipopplot_xaxis_label'), label = 'Label', value = 'VIP-value'),
-                                                           selectInput(inputId = ns('opls_viploilipopplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_viploilipopplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-viploilipopplot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_viploilipopplot_yaxis_label'), label = 'Label', value = 'metabolites'),
-                                                           selectInput(inputId = ns('opls_viploilipopplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_viploilipopplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-viploilipopplot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_viploilipopplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_viploilipopplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_viploilipopplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_viploilipopplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_viploilipopplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-viploilipopplot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_viploilipopplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_viploilipopplot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_viploilipopplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_viploilipopplot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_viploilipopplot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                
-                tabPanel(title = "VIP-bubble plot",
-                         hidden(div(id = ns("result-vipbubbleplot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 270px)',
-                                          withSpinner(
-                                            plotOutput(outputId = ns("vipbubble_plot"),
-                                                       width = "100%",
-                                                       height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-vip-bubble", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_vip_bubble_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_vip_bubble_data"))
-                                                   )
-                                                   )
-                                        ),
-                                        tags$div(id="overlay-opls-vip-bubble", class="overlay", onclick = onOverlayClick('drawer-opls-vip-bubble', 'overlay-opls-vip-bubble')),
-                                        
-                                        tags$div(
-                                          style = 'width: 270px; z-index:101;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            
-                                            # Data settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'data-settings-opls-vipbubbleplot', title = 'Data', collapsed = TRUE),
-                                              tags$div(id = 'data-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                            ), 
-                                                                            onclick = onInspectDataBtnClick('drawer-opls-vip-bubble', 'overlay-opls-vip-bubble')
-                                                                    ),
-                                                       selectInput(inputId = ns('opls_vipbubbleplot_xfield'), label = 'x field', selected = 'vip', choices = c('vip')),
-                                                       selectInput(inputId = ns('opls_vipbubbleplot_yfield'), label = 'y field', selected = 'P-value', choices = c('P-value', 'Q-value')),
-                                                       numericInput(inputId = ns('opls_vipbubbleplot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
-                                                       selectInput(inputId = ns('opls_vipbubbleplot_pvalue_calc_method'), label = 'P-value calculation method', 
-                                                                   selected = 'T-test', choices = c('T-test', 'Wilcox-test')),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'point-settings-opls-vipbubbleplot', title = 'Point', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'point-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_vipbubbleplot_showlabel'), label = 'Show metabolite name', value = FALSE),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_point_maxsize'), label = 'Max point size', min = 0.1, step = 1, value = 6),
-                                                           selectInput(inputId = ns('opls_vipbubbleplot_datapoint_color_palette'), label = 'Color palette',
-                                                                       choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons'),
-                                                                       selected = 'd3'),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_point_fillalpha'), label = 'Color transparency', min = 0, step = 0.05, value = 0.8)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'hline-settings-opls-vipbubbleplot', title = 'h-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'hline-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_vipbubbleplot_showhline'), value = TRUE, label = 'Show h-line'),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_hline_value'), label = 'Reference value', step = 0.1, value = 1.3),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_hline_size'), label = 'Line width', step = 0.1, value = 0.5),
-                                                           selectInput(inputId = ns('opls_vipbubbleplot_hline_shape'), label = 'Line shape', 
-                                                                       selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_vipbubbleplot_hline_color"), label = "Line color", value = "black",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'vline-settings-opls-vipbubbleplot', title = 'v-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'vline-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_vipbubbleplot_showvline'), value = TRUE, label = 'Show v-line'),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_vline_value'), label = 'Reference value', step = 0.1, value = 1),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_vline_size'), label = 'Line width', step = 0.1, value = 0.5),
-                                                           selectInput(inputId = ns('opls_vipbubbleplot_vline_shape'), label = 'Line shape', 
-                                                                       selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_vipbubbleplot_vline_color"), label = "Line color", value = "black",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-vipbubbleplot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_vipbubbleplot_title_text'), label = 'Text'),
-                                                       selectInput(inputId = ns('opls_vipbubbleplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_vipbubbleplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_vipbubbleplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-vipbubbleplot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-vipbubbleplot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_vipbubbleplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-vipbubbleplot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_vipbubbleplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-vipbubbleplot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-vipbubbleplot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_vipbubbleplot_xaxis_label'), label = 'Label', value = 'VIP'),
-                                                           selectInput(inputId = ns('opls_vipbubbleplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-vipbubbleplot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_vipbubbleplot_yaxis_label'), label = 'Label', value = '-Log10(P-value)'),
-                                                           selectInput(inputId = ns('opls_vipbubbleplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_vipbubbleplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-vipbubbleplot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_vipbubbleplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_vipbubbleplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_vipbubbleplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_vipbubbleplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_vipbubbleplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-vipbubbleplot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_vipbubbleplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_vipbubbleplot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_vipbubbleplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_vipbubbleplot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_vipbubbleplot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                
-                tabPanel(title = "S-plot",
-                         hidden(div(id = ns("result-splot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 270px)',
-                                          withSpinner(
-                                            plotOutput(outputId = ns("splot"),
-                                                       width = "100%",
-                                                       height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-splot", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_splot_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_splot_data"))
-                                                   )
-                                          )
-                                        ),
-                                        tags$div(id="overlay-opls-splot", class="overlay", onclick = onOverlayClick('drawer-opls-splot', 'overlay-opls-splot')),
-                                        
-                                        tags$div(
-                                          style = 'width: 270px; z-index:101;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            
-                                            # Data settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'data-settings-opls-splot', title = 'Data', collapsed = TRUE),
-                                              tags$div(id = 'data-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                   ), 
-                                                                   onclick = onInspectDataBtnClick('drawer-opls-splot', 'overlay-opls-splot')
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'point-settings-opls-splot', title = 'Point', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'point-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           selectInput(inputId = ns('opls_splot_color_scheme'), label = 'Coloring scheme', selected = 'Metabolite class', choices = c('Metabolite class', 'VIP value')),
-                                                           numericInput(inputId = ns('opls_splot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
-                                                           colourInput(inputId = ns("opls_splot_color_gtr_vip_threshold"), label = "Point color greater than threshold", value = "#CE3D32",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           colourInput(inputId = ns("opls_splot_color_ltr_vip_threshold"), label = "Point color less than threshold", value = "#4CAF50",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           selectInput(inputId = ns('opls_splot_datapoint_color_palette'), label = 'Color palette',
-                                                                       choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons', 'custom'),
-                                                                       selected = 'd3'),
-                                                           textAreaInput(inputId = ns('opls_splot_datapoint_custom_color_palette_inputs_rgb'), label = 'Custom color palette', 
-                                                                         width = '100%', height = '120px', resize = 'vertical',
-                                                                         value = '#E64B35, #3C5488, #91D1C2, #4DBBD5, #F39B7F, #DC0000, #E7C76F, #00A087, #8491B4, #7E6148, #339900, #924822, #99CC00, #5050FF, #CE3D32, #749B58, #F0E685, #466983, #0099CC, #BA6338, #5DB1DD, #802268, #6BD76B, #D595A7, #837B8D, #C75127, #D58F5C, #7A65A5, #E4AF69, #3B1B53, #CDDEB7, #612A79, #8EC4CB, #4CAF50, #FF8C3E'),
-                                                           uiOutput(outputId = ns('opls_splot_datapoint_custom_color_palette_block')),
-                                                           numericInput(inputId = ns('opls_splot_point_fillalpha'), label = 'Color transparency', min = 0, max = 1, step = 0.05, value = 1),
-                                                           numericInput(inputId = ns('opls_splot_point_size'), label = 'Point size', step = 0.1, value = 2.1)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'hline-settings-opls-splot', title = 'h-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'hline-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_splot_showhline'), value = TRUE, label = 'Show h-line'),
-                                                           numericInput(inputId = ns('opls_splot_hline_value'), label = 'Reference value', step = 0.1, value = 0),
-                                                           numericInput(inputId = ns('opls_splot_hline_size'), label = 'Line width', step = 0.1, value = 0.5),
-                                                           selectInput(inputId = ns('opls_splot_hline_shape'), label = 'Line shape', 
-                                                                       selected = 'solid', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_splot_hline_color"), label = "Line color", value = "gray",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'vline-settings-opls-splot', title = 'v-line', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'vline-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           checkboxInput(inputId = ns('opls_splot_showvline'), value = TRUE, label = 'Show v-line'),
-                                                           numericInput(inputId = ns('opls_splot_vline_value'), label = 'Reference value', step = 0.1, value = 0),
-                                                           numericInput(inputId = ns('opls_splot_vline_size'), label = 'Line width', step = 0.1, value = 0.5),
-                                                           selectInput(inputId = ns('opls_splot_vline_shape'), label = 'Line shape', 
-                                                                       selected = 'solid', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
-                                                           colourInput(inputId = ns("opls_splot_vline_color"), label = "Line color", value = "gray",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-splot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_splot_title_text'), label = 'Text'),
-                                                       selectInput(inputId = ns('opls_splot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_splot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_splot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-splot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-splot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_splot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-splot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_splot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-splot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-splot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_splot_xaxis_label'), label = 'Label', value = 't[1]'),
-                                                           selectInput(inputId = ns('opls_splot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_splot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-splot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_splot_yaxis_label'), label = 'Label', value = 't(corr)[1]'),
-                                                           selectInput(inputId = ns('opls_splot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_splot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-splot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_splot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_splot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_splot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_splot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_splot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-splot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_splot_width'), label = 'Width', min = 100, step = 10, value = opls_result_splot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_splot_height'), label = 'Height', min = 100, step = 10, value = opls_result_splot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_splot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                
-                tabPanel(title = "V-plot",
-                         hidden(div(id = ns("result-vplot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 270px)',
-                                          withSpinner(
-                                            plotOutput(outputId = ns("vplot"),
-                                                       width = "100%",
-                                                       height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-vplot", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_vplot_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_vplot_data"))
-                                                   )
-                                          )
-                                        ),
-                                        tags$div(id="overlay-opls-vplot", class="overlay", onclick = onOverlayClick('drawer-opls-vplot', 'overlay-opls-vplot')),
-                                        
-                                        tags$div(
-                                          style = 'width: 270px; z-index:101;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            
-                                            # Data settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'data-settings-opls-vplot', title = 'Data', collapsed = TRUE),
-                                              tags$div(id = 'data-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                   ), 
-                                                                   onclick = onInspectDataBtnClick('drawer-opls-vplot', 'overlay-opls-vplot')
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'point-settings-opls-vplot', title = 'Point', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'point-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           numericInput(inputId = ns('opls_vplot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
-                                                           colourInput(inputId = ns("opls_vplot_color_gtr_vip_threshold"), label = "Point color greater than threshold", value = "#CE3D32",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           colourInput(inputId = ns("opls_vplot_color_ltr_vip_threshold"), label = "Point color less than threshold", value = "#4CAF50",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           numericInput(inputId = ns('opls_vplot_point_size'), label = 'Point size', step = 0.1, value = 2.1),
-                                                           checkboxInput(inputId = ns('opls_vplot_show_label'), label = 'Show label', value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-vplot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_vplot_title_text'), label = 'Text'),
-                                                       selectInput(inputId = ns('opls_vplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_vplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_vplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-vplot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-vplot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_vplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-vplot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_vplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-vplot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-vplot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_vplot_xaxis_label'), label = 'Label', value = 'p(corr)'),
-                                                           selectInput(inputId = ns('opls_vplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_vplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-vplot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_vplot_yaxis_label'), label = 'Label', value = 'VIP(variable importance to projection)'),
-                                                           selectInput(inputId = ns('opls_vplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_vplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-vplot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_vplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_vplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_vplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_vplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_vplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-vplot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_vplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_vplot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_vplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_vplot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_vplot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                
-                tabPanel(title = "Permutation-plot",
-                         hidden(div(id = ns("result-permutationplot"),
-                                    fluidRow(
-                                      tags$div(
-                                        style = 'display:flex; gap:15px; padding:15px;',
-                                        tags$div(
-                                          style = 'width: calc(100% - 270px)',
-                                          withSpinner(
-                                            plotOutput(outputId = ns("permutationplot"),
-                                                       width = "100%",
-                                                       height = "auto")
-                                          )
-                                        ),
-                                        
-                                        tags$div(
-                                          id="drawer-opls-permutationplot", class="drawer",
-                                          tags$div(style = "padding:15px 20px 20px 20px;",
-                                                   downloadButton(outputId = ns("download_opls_permutationplot_data"),
-                                                                  class = "action-button-primary",
-                                                                  style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
-                                                                  label = "Download",
-                                                                  icon = icon("download")),
-                                                   tags$div(
-                                                     style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
-                                                     DT::DTOutput(outputId = ns("opls_permutationplot_data"))
-                                                   )
-                                          )
-                                        ),
-                                        tags$div(id="overlay-opls-permutationplot", class="overlay", onclick = onOverlayClick('drawer-opls-permutationplot', 'overlay-opls-permutationplot')),
-                                        
-                                        tags$div(
-                                          style = 'width: 270px; z-index:101;',
-                                          tags$div(
-                                            style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
-                                            
-                                            # Data settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'data-settings-opls-permutationplot', title = 'Data', collapsed = TRUE),
-                                              tags$div(id = 'data-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$button(class = "action-button-primary", 
-                                                                   style = "height:26px; font-size:13px; margin-bottom:8px;",
-                                                                   tags$div(tags$i(class="far fa-eye"),
-                                                                            tags$span("Inspect data"), 
-                                                                   ), 
-                                                                   onclick = onInspectDataBtnClick('drawer-opls-permutationplot', 'overlay-opls-permutationplot')
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'point-r2-settings-opls-permutationplot', title = 'Point(R2)', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'point-r2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           colourInput(inputId = ns("opls_permutationplot_point_r2_color"), label = "Point color", value = "#3F51B5",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           numericInput(inputId = ns('opls_permutationplot_point_r2_size'), label = 'Point size', step = 0.1, value = 3.5),
-                                                           selectInput(inputId = ns('opls_permutationplot_point_r2_shape'), label = 'Point shape', 
-                                                                       selected = '22', choices = c('Circle' = '21', 'Square' = '22', 'rhomboid' = '23', 'triangle' = '24'))
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'point-q2-settings-opls-permutationplot', title = 'Point(Q2)', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'point-q2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           colourInput(inputId = ns("opls_permutationplot_point_q2_color"), label = "Point color", value = "#4CAF50",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           numericInput(inputId = ns('opls_permutationplot_point_q2_size'), label = 'Point size', step = 0.1, value = 3.5),
-                                                           selectInput(inputId = ns('opls_permutationplot_point_q2_shape'), label = 'Point shape', 
-                                                                       selected = '21', choices = c('Circle' = '21', 'Square' = '22', 'rhomboid' = '23', 'triangle' = '24'))
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'line-r2-settings-opls-permutationplot', title = 'Line(R2)', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'line-r2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           colourInput(inputId = ns("opls_permutationplot_line_r2_color"), label = "Line color", value = "black",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           selectInput(inputId = ns('opls_permutationplot_line_r2_type'), label = 'Line type', selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash', 'blank')),
-                                                           numericInput(inputId = ns('opls_permutationplot_line_r2_weight'), label = 'Line weight', min = 0, step = 0.5, value = 0.5)
-                                                         )
-                                                       ),
-                                                       
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'line-q2-settings-opls-permutationplot', title = 'Line(Q2)', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'line-q2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           colourInput(inputId = ns("opls_permutationplot_line_q2_color"), label = "Line color", value = "black",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE),
-                                                           selectInput(inputId = ns('opls_permutationplot_line_q2_type'), label = 'Line type', selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash', 'blank')),
-                                                           numericInput(inputId = ns('opls_permutationplot_line_q2_weight'), label = 'Line weight', min = 0, step = 0.5, value = 0.5)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Title settings
-                                            tags$div(
-                                              style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'title-settings-opls-permutationplot', title = 'Title', collapsed = TRUE),
-                                              tags$div(id = 'title-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       textInput(inputId = ns('opls_permutationplot_title_text'), label = 'Text'),
-                                                       selectInput(inputId = ns('opls_permutationplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                       numericInput(inputId = ns('opls_permutationplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
-                                                       selectInput(inputId = ns('opls_permutationplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
-                                              )
-                                            ),
-                                            
-                                            # Panel settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'panel-settings-opls-permutationplot', title = 'Panel', collapsed = TRUE),
-                                              tags$div(id = 'panel-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-background-settings-opls-permutationplot', title = 'Background', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-background-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           colourInput(inputId = ns("opls_permutationplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
-                                                                       allowTransparent = TRUE, closeOnClick = TRUE)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'panel-grid-settings-opls-permutationplot', title = 'Grid', collapsed = FALSE),
-                                                         tags$div(
-                                                           id = 'panel-grid-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:block;',
-                                                           checkboxInput(inputId = ns('opls_permutationplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Axis settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'axis-settings-opls-permutationplot', title = 'Axis', collapsed = TRUE),
-                                              tags$div(id = 'axis-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'xaxis-settings-opls-permutationplot', title = 'xAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'xaxis-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_permutationplot_xaxis_label'), label = 'Label', value = ''),
-                                                           selectInput(inputId = ns('opls_permutationplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_permutationplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       tags$div(
-                                                         class = 'collapse-subitem',
-                                                         buildAccordionItem(id = 'yaxis-settings-opls-permutationplot', title = 'yAxis', collapsed = TRUE),
-                                                         tags$div(
-                                                           id = 'yaxis-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
-                                                           textInput(inputId = ns('opls_permutationplot_yaxis_label'), label = 'Label', value = ''),
-                                                           selectInput(inputId = ns('opls_permutationplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
-                                                           numericInput(inputId = ns('opls_permutationplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
-                                                         )
-                                                       ),
-                                                       
-                                              )
-                                            ),
-                                            
-                                            # Legend settings
-                                            tags$div(
-                                              style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
-                                              buildAccordionItem(id = 'legend-settings-opls-permutationplot', title = 'Legend', collapsed = TRUE),
-                                              tags$div(id = 'legend-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       # legend显示在内部、外部、不显示
-                                                       radioButtons(inputId = ns('opls_permutationplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
-                                                       selectInput(inputId = ns('opls_permutationplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
-                                                       tags$div(id = 'opls_permutationplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_permutationplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_permutationplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                            # Size
-                                            tags$div(
-                                              buildAccordionItem(id = 'size-settings-opls-permutationplot', title = 'Size', collapsed = TRUE),
-                                              tags$div(id = 'size-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
-                                                       tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_permutationplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_permutationplot_width)
-                                                                ),
-                                                                tags$div(
-                                                                  style = 'width:50%',
-                                                                  numericInput(inputId = ns('opls_result_permutationplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_permutationplot_height)
-                                                                )
-                                                       )
-                                              )
-                                            ),
-                                            
-                                          )
-                                        )
-                                      )
-                                    ),
-                                    tags$div(
-                                      style = 'width:120px; float:right;',
-                                      actionButton(inputId = ns("export_opls_result_permutationplot"),
-                                                   class = "action-button-primary",
-                                                   label = "Download",
-                                                   icon = icon("download"))
-                                    )
-                         ))
-                ),
-                
+              style = 'border:1px solid rgba(36, 41, 46, 0.12); border-top:none;',
+              buildAccordionItem('settings-group-selection', 'Grouping Selection'),
+              uiOutput(outputId = ns('groupcol_selection_ui'))
+            ),
+            tags$div(
+              style = 'border:1px solid rgba(36, 41, 46, 0.12); border-top:none;',
+              buildAccordionItem('settings-group-comparison', 'Grouping Comparison'),
+              uiOutput(outputId = ns("groups_selection_ui"))
+            ),
+            tags$div(
+              style = 'border:1px solid rgba(36, 41, 46, 0.12); border-top:none;',
+              buildAccordionItem('settings-data-preparation', 'Data Preparation'),
+              tags$div(id = 'settings-data-preparation', class = 'collapse-item-body', style = 'display:block;',
+                        selectInput(inputId = ns('settings_data_transformation'), label = 'Transformation', choices = c('None', 'Log2', 'Log10'), selected = 'None'),
+                        selectInput(inputId = ns('settings_data_scaling'), label = 'Scaling', choices = c('None', 'Centering', 'Unit Variance scaling', 'Pareto scaling', 'Range scaling', 'Vast scaling', 'Level scaling'), selected = 'None')
               )
+            ),
+            tags$div(
+              class = 'collapse-item-body',
+              style = 'border:1px solid rgba(36, 41, 46, 0.12); border-top:none; border-radius: 0px 0px 5px 5px; padding-top:12px; padding-bottom:12px;',
+              actionButton(ns("execute"),
+                            label = "Execute",
+                            icon = icon("play"),
+                            class = "action-button-primary"),
+            )
+          ),
+
+          tags$div(
+            style= "width:calc(100% - 250px)",
+            tabsetPanel(
+              tabPanel(title = "Overview",
+                        icon = icon("sliders"),
+                        hidden(div(id = ns("result-overview"),
+                                  withSpinner(uiOutput(outputId = ns("opls_result_overview")))
+                        ))
+              ),
+              tabPanel(title = "Preprocessed Data",
+                        icon = icon("table"),
+                        hidden(div(id = ns("preprocessed-data"),
+                                  withSpinner(DT::DTOutput(outputId = ns("preprocessed_data"))),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_preprocessed_data"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              tabPanel(title = "Score plot",
+                        icon = tags$i(class = "iconfont icon-a-zhuchengfenfenxiPCA", role="presentation"),
+                        hidden(div(id = ns("result-scoreplot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 250px)',
+                                        withSpinner(plotOutput(outputId = ns("score_plot"),
+                                                                width = "100%",
+                                                                height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-scoreplot", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_scoreplot_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_scoreplot_data"))
+                                                  )
+                                        )
+                                      ),
+                                      tags$div(id="overlay-opls-scoreplot", class="overlay", 
+                                                onclick = onOverlayClick('drawer-opls-scoreplot', 'overlay-opls-scoreplot')),
+                                      
+                                      tags$div(
+                                        style = 'width: 250px; z-index: 200;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          
+                                          # Datapoint settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'datapoint-settings-opls-scoreplot', title = 'Data points', collapsed = TRUE),
+                                            tags$div(id = 'datapoint-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # inspect data
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                  ), 
+                                                                  onclick = onInspectDataBtnClick('drawer-opls-scoreplot', 'overlay-opls-scoreplot')
+                                                      ),
+                                                      selectInput(inputId = ns('opls_scoreplot_datapoint_fillcolor'), label = 'Fill color', selected = 'd3', 
+                                                                  choices = c('d3', 'aaas', 'jama', 'jco', 'lancet', 'locus', 'nejm', 'npg', 'rick', 'simpson', 'startrek', 'tron', 'dark', 'light')),
+                                                      numericInput(inputId = ns('opls_scoreplot_datapoint_fillalpha'), label = 'Fill transparency', min = 0.01, max = 1, step = 0.1, value = 1),
+                                                      selectInput(inputId = ns('opls_scoreplot_datapoint_border_color'), label = 'Border color', selected = 'd3', 
+                                                                  choices = c('d3', 'aaas', 'jama', 'jco', 'lancet', 'locus', 'nejm', 'npg', 'rick', 'simpson', 'startrek', 'tron', 'dark', 'light')),
+                                                      selectInput(inputId = ns('opls_scoreplot_datapoint_shape'), label = 'Shape', choices = c('Circle' = 16, 'Square' = 15, 'Rhomboid' = 18, 'Triangle' = 17)),
+                                                      numericInput(inputId = ns('opls_scoreplot_datapoint_size'), label = 'Size', min = 1, value = 5, step = 1)
+                                            )
+                                          ),
+                                          
+                                          # Confidence interval settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'confidence-settings-opls-scoreplot', title = 'Confidence level', collapsed = TRUE),
+                                            tags$div(id = 'confidence-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      numericInput(inputId = ns('opls_scoreplot_confidence_interval'), label = 'Confidence level', min = 0, max = 1, step = 0.05, value = 0.95),
+                                                      selectInput(inputId = ns('opls_scoreplot_confidence_datacoverage'), label = 'Data coverage', choices = c('For all data' = FALSE, 'For group data' = TRUE)),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'confidence-settings-fill-opls-scoreplot', title = 'Fill'),
+                                                        tags$div(
+                                                          id = 'confidence-settings-fill-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          # 是否填充颜色
+                                                          radioButtons(inputId = ns('opls_scoreplot_confidence_fillornot'), label = '', inline = TRUE, selected = 'noFill', choices = c('No fill' = 'noFill', 'Solid color'= 'solidColor')),
+                                                          # 多分组颜色选择器
+                                                          selectInput(inputId = ns('opls_scoreplot_confidence_fillcolor_multi'), label = 'Color', selected = 'd3', 
+                                                                      choices = c('d3', 'aaas', 'jama', 'jco', 'lancet', 'locus', 'nejm', 'npg', 'rick', 'simpson', 'startrek', 'tron', 'dark', 'light')),
+                                                          # 单分组颜色选择器
+                                                          colourInput(inputId = ns("opls_scoreplot_confidence_fillcolor_single"), label = "Color", value = "grey30",
+                                                                      returnName = TRUE, palette = "limited", closeOnClick = TRUE, allowedCols = c(ColorBrewr$custom)),
+                                                          numericInput(inputId = ns('opls_scoreplot_confidence_fillalpha'), label = 'Transparency', min = 0.01, max = 1, step = 0.1, value = 0.1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'confidence-settings-line-opls-scoreplot', title = 'Border'),
+                                                        tags$div(
+                                                          id = 'confidence-settings-line-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          radioButtons(inputId = ns('opls_scoreplot_confidence_withlineornot'), label = '', choices = c('No border' = 'noLine', 'Solid line' = 'solidLine'), inline = TRUE, selected = 'solidLine'),
+                                                          selectInput(inputId = ns('opls_scoreplot_confidence_linetype'), label = 'Type', selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash', 'blank')),
+                                                          numericInput(inputId = ns('opls_scoreplot_confidence_lineweight'), label = 'Weight', min = 0, max = 1, step = 0.1, value = 0.5),
+                                                          numericInput(inputId = ns('opls_scoreplot_confidence_linealpha'), label = 'Transparency', min = 0.01, max = 1, step = 0.1, value = 1)
+                                                        )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-scoreplot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_scoreplot_title_text'), label = 'Text'),
+                                                      selectInput(inputId = ns('opls_scoreplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_scoreplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_scoreplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-scoreplot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-scoreplot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_scoreplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-scoreplot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_scoreplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-scoreplot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-scoreplot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_scoreplot_xaxis_label'), label = 'Label', value = 't[1]'),
+                                                          selectInput(inputId = ns('opls_scoreplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_scoreplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-scoreplot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-scoreplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_scoreplot_yaxis_label'), label = 'Label', value = 't[2]'),
+                                                          selectInput(inputId = ns('opls_scoreplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_scoreplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-scoreplot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_scoreplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_scoreplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_scoreplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_scoreplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_scoreplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-scoreplot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-scoreplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_scoreplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_scoreplot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_scoreplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_scoreplot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_scoreplot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              tabPanel(title = "Loading plot",
+                        hidden(div(id = ns("result-loadingplot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 270px)',
+                                        withSpinner(plotOutput(outputId = ns("loading_plot"),
+                                                                width = "100%",
+                                                                height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-loadingplot", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_loadingplot_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_loadingplot_data"))
+                                                  )
+                                        )
+                                      ),
+                                      tags$div(id="overlay-opls-loadingplot", class="overlay", 
+                                                onclick = onOverlayClick('drawer-opls-loadingplot', 'overlay-opls-loadingplot')),
+                                      
+                                      tags$div(
+                                        style = 'width: 270px; z-index:101;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          # Datapoint settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'datapoint-settings-opls-loadingplot', title = 'Data points', collapsed = TRUE),
+                                            tags$div(id = 'datapoint-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # inspect data
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                  ), 
+                                                                  onclick = onInspectDataBtnClick('drawer-opls-loadingplot', 'overlay-opls-loadingplot')
+                                                      ),
+                                                      
+                                                      # point
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'datapoint-point-settings-opls-loadingplot', title = 'Point'),
+                                                        tags$div(
+                                                          id = 'datapoint-point-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          selectInput(inputId = ns('opls_loadingplot_datapoint_fillpalette'), label = 'Fill color', selected = 'd3', 
+                                                                      choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons')),
+                                                          numericInput(inputId = ns('opls_loadingplot_datapoint_fillalpha'), label = 'Fill transparency', min = 0.01, max = 1, step = 0.1, value = 1),
+                                                          selectInput(inputId = ns('opls_loadingplot_datapoint_shape'), label = 'Point shape', selected = '21', 
+                                                                      choices = c('Circle' = '21', 'Square' = '22', 'rhomboid' = '23', 'triangle' = '24')),
+                                                          numericInput(inputId = ns('opls_loadingplot_datapoint_size'), label = 'Size', min = 1, value = 3, step = 1)
+                                                        )
+                                                      ),
+                                                      # h-line
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'hline-settings-opls-loadingplot', title = 'h-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'hline-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_loadingplot_showhline'), value = TRUE, label = 'Show h-line'),
+                                                          numericInput(inputId = ns('opls_loadingplot_hline_value'), label = 'Reference value', step = 0.5, value = 0),
+                                                          numericInput(inputId = ns('opls_loadingplot_hline_size'), label = 'Line width', step = 0.5, value = 0.5),
+                                                          selectInput(inputId = ns('opls_loadingplot_hline_shape'), label = 'Line shape', 
+                                                                      selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_loadingplot_hline_color"), label = "Line color", value = "gray33",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      # v-line
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'vline-settings-opls-loadingplot', title = 'v-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'vline-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_loadingplot_showvline'), value = TRUE, label = 'Show v-line'),
+                                                          numericInput(inputId = ns('opls_loadingplot_vline_value'), label = 'Reference value', step = 0.5, value = 0),
+                                                          numericInput(inputId = ns('opls_loadingplot_vline_size'), label = 'Line width', step = 0.5, value = 0.5),
+                                                          selectInput(inputId = ns('opls_loadingplot_vline_shape'), label = 'Line shape', 
+                                                                      selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_loadingplot_vline_color"), label = "Line color", value = "gray33",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-loadingplot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_loadingplot_title_text'), label = 'Text'),
+                                                      selectInput(inputId = ns('opls_loadingplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_loadingplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_loadingplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-loadingplot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-loadingplot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_loadingplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-loadingplot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_loadingplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-loadingplot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-loadingplot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_loadingplot_xaxis_label'), label = 'Label', value = 't[1]'),
+                                                          selectInput(inputId = ns('opls_loadingplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_loadingplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-loadingplot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-loadingplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_loadingplot_yaxis_label'), label = 'Label', value = 'o[1]'),
+                                                          selectInput(inputId = ns('opls_loadingplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_loadingplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-loadingplot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_loadingplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_loadingplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_loadingplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_loadingplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_loadingplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-loadingplot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-loadingplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_loadingplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_loadingplot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_loadingplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_loadingplot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_loadingplot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              
+              tabPanel(title = "Bi plot",
+                        hidden(div(id = ns("result-bioplot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 270px)',
+                                        withSpinner(plotOutput(outputId = ns("bio_plot"),
+                                                                width = "100%",
+                                                                height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-bioplot", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_bioplot_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_bioplot_data"))
+                                                  )
+                                        )
+                                      ),
+                                      tags$div(id="overlay-opls-bioplot", class="overlay", 
+                                                onclick = onOverlayClick('drawer-opls-bioplot', 'overlay-opls-bioplot')),
+                                      
+                                      tags$div(
+                                        style = 'width: 270px; z-index:101;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          
+                                          # Data settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'data-settings-opls-bioplot', title = 'Data', collapsed = TRUE),
+                                            tags$div(id = 'data-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                  ), 
+                                                                  onclick = onInspectDataBtnClick('drawer-opls-bioplot', 'overlay-opls-bioplot')
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'datapoint-group1-settings-opls-bioplot', 
+                                                                          title = 'Point(group-1)', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'datapoint-group1-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          numericInput(inputId = ns('opls_bioplot_point_group1_size'), label = 'Point size', min = 0.1, step = 0.5, value = 3.5),
+                                                          colourInput(inputId = ns("opls_bioplot_datapoint_group1_fill_color"), label = "Fill color", value = "#D595A7",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          colourInput(inputId = ns("opls_bioplot_datapoint_group1_border_color"), label = "Border color", value = "#575757",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'datapoint-group2-settings-opls-bioplot', 
+                                                                          title = 'Point(group-2)', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'datapoint-group2-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          numericInput(inputId = ns('opls_bioplot_point_group2_size'), label = 'Point size', min = 0.1, step = 0.5, value = 3.5),
+                                                          colourInput(inputId = ns("opls_bioplot_datapoint_group2_fill_color"), label = "Fill color", value = "#009966",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          colourInput(inputId = ns("opls_bioplot_datapoint_group2_border_color"), label = "Border color", value = "#575757",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'hline-settings-opls-bioplot', title = 'h-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'hline-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_bioplot_showhline'), value = TRUE, label = 'Show h-line'),
+                                                          numericInput(inputId = ns('opls_bioplot_hline_value'), label = 'Reference value', step = 0.1, value = 0),
+                                                          numericInput(inputId = ns('opls_bioplot_hline_size'), label = 'Line width', step = 0.1, value = 0.1),
+                                                          selectInput(inputId = ns('opls_bioplot_hline_shape'), label = 'Line shape', 
+                                                                      selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_bioplot_hline_color"), label = "Line color", value = "black",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'vline-settings-opls-bioplot', title = 'v-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'vline-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_bioplot_showvline'), value = TRUE, label = 'Show v-line'),
+                                                          numericInput(inputId = ns('opls_bioplot_vline_value'), label = 'Reference value', step = 0.1, value = 0),
+                                                          numericInput(inputId = ns('opls_bioplot_vline_size'), label = 'Line width', step = 0.1, value = 0.1),
+                                                          selectInput(inputId = ns('opls_bioplot_vline_shape'), label = 'Line shape', 
+                                                                      selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_bioplot_vline_color"), label = "Line color", value = "black",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-bioplot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_bioplot_title_text'), label = 'Text', value = 'bi-plot'),
+                                                      selectInput(inputId = ns('opls_bioplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_bioplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_bioplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-bioplot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-bioplot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_bioplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-bioplot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_bioplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-bioplot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-bioplot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_bioplot_xaxis_label'), label = 'Label', value = 'pc(cor)[1], t(cor)[1]'),
+                                                          selectInput(inputId = ns('opls_bioplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_bioplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-bioplot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-bioplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_bioplot_yaxis_label'), label = 'Label', value = 'pc(cor)[2], t(cor)[2]'),
+                                                          selectInput(inputId = ns('opls_bioplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_bioplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-bioplot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_bioplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_bioplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_bioplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_bioplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_bioplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-bioplot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-bioplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_bioplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_bioplot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_bioplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_bioplot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_bioplot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              
+              tabPanel(title = "VIP-loilipop plot",
+                        hidden(div(id = ns("result-viploilipopplot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 270px)',
+                                        withSpinner(plotOutput(outputId = ns("viploilipop_plot"),
+                                                                width = "100%",
+                                                                height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-vip-loilipop", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_viploilipop_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_viploilipop_data"))
+                                                  )
+                                        )
+                                      ),
+                                      tags$div(id="overlay-opls-vip-loilipop", class="overlay", 
+                                                onclick = onOverlayClick('drawer-opls-vip-loilipop', 'overlay-opls-vip-loilipop')),
+                                      
+                                      tags$div(
+                                        style = 'width: 270px; z-index:101;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          
+                                          # Data settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'data-settings-opls-viploilipopplot', title = 'Data', collapsed = TRUE),
+                                            tags$div(id = 'data-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                  ), 
+                                                                  onclick = onInspectDataBtnClick('drawer-opls-vip-loilipop', 'overlay-opls-vip-loilipop')
+                                                      ),
+                                                      numericInput(inputId = ns('opls_viploilipopplot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
+                                                      selectInput(inputId = ns('opls_viploilipopplot_sortby'), label = 'Sort by',
+                                                                  choices = c('Metabolite name asc' = 'nameasc',
+                                                                              'Metabolite name desc' = 'namedesc',
+                                                                              'VIP-value asc' = 'vipasc',
+                                                                              'VIP-value desc' = 'vipdesc',
+                                                                              'Original' = 'original'),
+                                                                  selected = 'original'),
+
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'datapoint-settings-opls-viploilipopplot', title = 'Point', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'datapoint-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          numericInput(inputId = ns('opls_viploilipopplot_point_size'), label = 'Point size', min = 0.1, step = 0.1, value = 3.2),
+                                                          checkboxInput(inputId = ns('opls_viploilipopplot_datapoint_class_colorful'), value = FALSE, label = 'Color different classes'),
+                                                          selectInput(inputId = ns('opls_viploilipopplot_datapoint_color_palette'), label = 'Color palette',
+                                                                      choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons'),
+                                                                      selected = 'd3'),
+                                                          colourInput(inputId = ns("opls_viploilipopplot_datapoint_fill_color"), label = "Fill color", value = "#f8766d",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          colourInput(inputId = ns("opls_viploilipopplot_datapoint_border_color"), label = "Border color", value = "#f8766d",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'datasegment-settings-opls-viploilipopplot', title = 'Segment', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'datasegment-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          numericInput(inputId = ns('opls_viploilipopplot_segment_size'), label = 'Line width', value = 0.5, step = 0.1, min = 0),
+                                                          checkboxInput(inputId = ns('opls_viploilipopplot_segment_class_colorful'), value = FALSE, label = 'Color different classes'),
+                                                          selectInput(inputId = ns('opls_viploilipopplot_segment_color_palette'), label = 'Color palette',
+                                                                      choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons'),
+                                                                      selected = 'd3'),
+                                                          colourInput(inputId = ns("opls_viploilipopplot_segment_color"), label = "Color", value = "black",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-viploilipopplot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_viploilipopplot_title_text'), label = 'Text'),
+                                                      selectInput(inputId = ns('opls_viploilipopplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_viploilipopplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_viploilipopplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-viploilipopplot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-viploilipopplot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_viploilipopplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-viploilipopplot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_viploilipopplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-viploilipopplot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-viploilipopplot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_viploilipopplot_xaxis_label'), label = 'Label', value = 'VIP-value'),
+                                                          selectInput(inputId = ns('opls_viploilipopplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_viploilipopplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-viploilipopplot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-viploilipopplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_viploilipopplot_yaxis_label'), label = 'Label', value = 'metabolites'),
+                                                          selectInput(inputId = ns('opls_viploilipopplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_viploilipopplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-viploilipopplot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_viploilipopplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_viploilipopplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_viploilipopplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_viploilipopplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_viploilipopplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-viploilipopplot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-viploilipopplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_viploilipopplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_viploilipopplot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_viploilipopplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_viploilipopplot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_viploilipopplot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              
+              tabPanel(title = "VIP-bubble plot",
+                        hidden(div(id = ns("result-vipbubbleplot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 270px)',
+                                        withSpinner(
+                                          plotOutput(outputId = ns("vipbubble_plot"),
+                                                      width = "100%",
+                                                      height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-vip-bubble", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_vip_bubble_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_vip_bubble_data"))
+                                                  )
+                                                  )
+                                      ),
+                                      tags$div(id="overlay-opls-vip-bubble", class="overlay", onclick = onOverlayClick('drawer-opls-vip-bubble', 'overlay-opls-vip-bubble')),
+                                      
+                                      tags$div(
+                                        style = 'width: 270px; z-index:101;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          
+                                          # Data settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'data-settings-opls-vipbubbleplot', title = 'Data', collapsed = TRUE),
+                                            tags$div(id = 'data-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                          ), 
+                                                                          onclick = onInspectDataBtnClick('drawer-opls-vip-bubble', 'overlay-opls-vip-bubble')
+                                                                  ),
+                                                      selectInput(inputId = ns('opls_vipbubbleplot_xfield'), label = 'x field', selected = 'vip', choices = c('vip')),
+                                                      selectInput(inputId = ns('opls_vipbubbleplot_yfield'), label = 'y field', selected = 'P-value', choices = c('P-value', 'Q-value')),
+                                                      numericInput(inputId = ns('opls_vipbubbleplot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
+                                                      selectInput(inputId = ns('opls_vipbubbleplot_pvalue_calc_method'), label = 'P-value calculation method', 
+                                                                  selected = 'T-test', choices = c('T-test', 'Wilcox-test')),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'point-settings-opls-vipbubbleplot', title = 'Point', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'point-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_vipbubbleplot_showlabel'), label = 'Show metabolite name', value = FALSE),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_point_maxsize'), label = 'Max point size', min = 0.1, step = 1, value = 6),
+                                                          selectInput(inputId = ns('opls_vipbubbleplot_datapoint_color_palette'), label = 'Color palette',
+                                                                      choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons'),
+                                                                      selected = 'd3'),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_point_fillalpha'), label = 'Color transparency', min = 0, step = 0.05, value = 0.8)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'hline-settings-opls-vipbubbleplot', title = 'h-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'hline-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_vipbubbleplot_showhline'), value = TRUE, label = 'Show h-line'),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_hline_value'), label = 'Reference value', step = 0.1, value = 1.3),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_hline_size'), label = 'Line width', step = 0.1, value = 0.5),
+                                                          selectInput(inputId = ns('opls_vipbubbleplot_hline_shape'), label = 'Line shape', 
+                                                                      selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_vipbubbleplot_hline_color"), label = "Line color", value = "black",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'vline-settings-opls-vipbubbleplot', title = 'v-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'vline-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_vipbubbleplot_showvline'), value = TRUE, label = 'Show v-line'),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_vline_value'), label = 'Reference value', step = 0.1, value = 1),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_vline_size'), label = 'Line width', step = 0.1, value = 0.5),
+                                                          selectInput(inputId = ns('opls_vipbubbleplot_vline_shape'), label = 'Line shape', 
+                                                                      selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_vipbubbleplot_vline_color"), label = "Line color", value = "black",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-vipbubbleplot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_vipbubbleplot_title_text'), label = 'Text'),
+                                                      selectInput(inputId = ns('opls_vipbubbleplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_vipbubbleplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_vipbubbleplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-vipbubbleplot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-vipbubbleplot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_vipbubbleplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-vipbubbleplot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_vipbubbleplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-vipbubbleplot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-vipbubbleplot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_vipbubbleplot_xaxis_label'), label = 'Label', value = 'VIP'),
+                                                          selectInput(inputId = ns('opls_vipbubbleplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-vipbubbleplot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-vipbubbleplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_vipbubbleplot_yaxis_label'), label = 'Label', value = '-Log10(P-value)'),
+                                                          selectInput(inputId = ns('opls_vipbubbleplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_vipbubbleplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-vipbubbleplot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_vipbubbleplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_vipbubbleplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_vipbubbleplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_vipbubbleplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_vipbubbleplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-vipbubbleplot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-vipbubbleplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_vipbubbleplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_vipbubbleplot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_vipbubbleplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_vipbubbleplot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_vipbubbleplot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              
+              tabPanel(title = "S-plot",
+                        hidden(div(id = ns("result-splot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 270px)',
+                                        withSpinner(
+                                          plotOutput(outputId = ns("splot"),
+                                                      width = "100%",
+                                                      height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-splot", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_splot_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_splot_data"))
+                                                  )
+                                        )
+                                      ),
+                                      tags$div(id="overlay-opls-splot", class="overlay", onclick = onOverlayClick('drawer-opls-splot', 'overlay-opls-splot')),
+                                      
+                                      tags$div(
+                                        style = 'width: 270px; z-index:101;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          
+                                          # Data settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'data-settings-opls-splot', title = 'Data', collapsed = TRUE),
+                                            tags$div(id = 'data-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                  ), 
+                                                                  onclick = onInspectDataBtnClick('drawer-opls-splot', 'overlay-opls-splot')
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'point-settings-opls-splot', title = 'Point', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'point-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          selectInput(inputId = ns('opls_splot_color_scheme'), label = 'Coloring scheme', selected = 'Metabolite class', choices = c('Metabolite class', 'VIP value')),
+                                                          numericInput(inputId = ns('opls_splot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
+                                                          colourInput(inputId = ns("opls_splot_color_gtr_vip_threshold"), label = "Point color greater than threshold", value = "#CE3D32",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          colourInput(inputId = ns("opls_splot_color_ltr_vip_threshold"), label = "Point color less than threshold", value = "#4CAF50",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          selectInput(inputId = ns('opls_splot_datapoint_color_palette'), label = 'Color palette',
+                                                                      choices = c('d3(10)' = 'd3', 'aaas(10)' = 'aaas', 'jama(7)' = 'jama', 'jco(10)' = 'jco', 'lancet(9)' = 'lancet', 'locuszoom(7)' = 'locuszoom', 'nejm(8)' = 'nejm', 'npg(10)' = 'npg', 'simpsons(16)' = 'simpsons', 'custom'),
+                                                                      selected = 'd3'),
+                                                          textAreaInput(inputId = ns('opls_splot_datapoint_custom_color_palette_inputs_rgb'), label = 'Custom color palette', 
+                                                                        width = '100%', height = '120px', resize = 'vertical',
+                                                                        value = '#E64B35, #3C5488, #91D1C2, #4DBBD5, #F39B7F, #DC0000, #E7C76F, #00A087, #8491B4, #7E6148, #339900, #924822, #99CC00, #5050FF, #CE3D32, #749B58, #F0E685, #466983, #0099CC, #BA6338, #5DB1DD, #802268, #6BD76B, #D595A7, #837B8D, #C75127, #D58F5C, #7A65A5, #E4AF69, #3B1B53, #CDDEB7, #612A79, #8EC4CB, #4CAF50, #FF8C3E'),
+                                                          uiOutput(outputId = ns('opls_splot_datapoint_custom_color_palette_block')),
+                                                          numericInput(inputId = ns('opls_splot_point_fillalpha'), label = 'Color transparency', min = 0, max = 1, step = 0.05, value = 1),
+                                                          numericInput(inputId = ns('opls_splot_point_size'), label = 'Point size', step = 0.1, value = 2.1)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'hline-settings-opls-splot', title = 'h-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'hline-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_splot_showhline'), value = TRUE, label = 'Show h-line'),
+                                                          numericInput(inputId = ns('opls_splot_hline_value'), label = 'Reference value', step = 0.1, value = 0),
+                                                          numericInput(inputId = ns('opls_splot_hline_size'), label = 'Line width', step = 0.1, value = 0.5),
+                                                          selectInput(inputId = ns('opls_splot_hline_shape'), label = 'Line shape', 
+                                                                      selected = 'solid', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_splot_hline_color"), label = "Line color", value = "gray",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'vline-settings-opls-splot', title = 'v-line', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'vline-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          checkboxInput(inputId = ns('opls_splot_showvline'), value = TRUE, label = 'Show v-line'),
+                                                          numericInput(inputId = ns('opls_splot_vline_value'), label = 'Reference value', step = 0.1, value = 0),
+                                                          numericInput(inputId = ns('opls_splot_vline_size'), label = 'Line width', step = 0.1, value = 0.5),
+                                                          selectInput(inputId = ns('opls_splot_vline_shape'), label = 'Line shape', 
+                                                                      selected = 'solid', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash')),
+                                                          colourInput(inputId = ns("opls_splot_vline_color"), label = "Line color", value = "gray",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-splot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_splot_title_text'), label = 'Text'),
+                                                      selectInput(inputId = ns('opls_splot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_splot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_splot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-splot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-splot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_splot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-splot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_splot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-splot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-splot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_splot_xaxis_label'), label = 'Label', value = 't[1]'),
+                                                          selectInput(inputId = ns('opls_splot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_splot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-splot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-splot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_splot_yaxis_label'), label = 'Label', value = 't(corr)[1]'),
+                                                          selectInput(inputId = ns('opls_splot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_splot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-splot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_splot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_splot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_splot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_splot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_splot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-splot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-splot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_splot_width'), label = 'Width', min = 100, step = 10, value = opls_result_splot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_splot_height'), label = 'Height', min = 100, step = 10, value = opls_result_splot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_splot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              
+              tabPanel(title = "V-plot",
+                        hidden(div(id = ns("result-vplot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 270px)',
+                                        withSpinner(
+                                          plotOutput(outputId = ns("vplot"),
+                                                      width = "100%",
+                                                      height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-vplot", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_vplot_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_vplot_data"))
+                                                  )
+                                        )
+                                      ),
+                                      tags$div(id="overlay-opls-vplot", class="overlay", onclick = onOverlayClick('drawer-opls-vplot', 'overlay-opls-vplot')),
+                                      
+                                      tags$div(
+                                        style = 'width: 270px; z-index:101;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          
+                                          # Data settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'data-settings-opls-vplot', title = 'Data', collapsed = TRUE),
+                                            tags$div(id = 'data-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                  ), 
+                                                                  onclick = onInspectDataBtnClick('drawer-opls-vplot', 'overlay-opls-vplot')
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'point-settings-opls-vplot', title = 'Point', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'point-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          numericInput(inputId = ns('opls_vplot_vip_threshold'), label = 'VIP value threshold', value = 1, min = 0),
+                                                          colourInput(inputId = ns("opls_vplot_color_gtr_vip_threshold"), label = "Point color greater than threshold", value = "#CE3D32",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          colourInput(inputId = ns("opls_vplot_color_ltr_vip_threshold"), label = "Point color less than threshold", value = "#4CAF50",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          numericInput(inputId = ns('opls_vplot_point_size'), label = 'Point size', step = 0.1, value = 2.1),
+                                                          checkboxInput(inputId = ns('opls_vplot_show_label'), label = 'Show label', value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-vplot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_vplot_title_text'), label = 'Text'),
+                                                      selectInput(inputId = ns('opls_vplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_vplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_vplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-vplot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-vplot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_vplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-vplot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_vplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-vplot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-vplot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_vplot_xaxis_label'), label = 'Label', value = 'p(corr)'),
+                                                          selectInput(inputId = ns('opls_vplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_vplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-vplot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-vplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_vplot_yaxis_label'), label = 'Label', value = 'VIP(variable importance to projection)'),
+                                                          selectInput(inputId = ns('opls_vplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_vplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-vplot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_vplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_vplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_vplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_vplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_vplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-vplot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-vplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_vplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_vplot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_vplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_vplot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_vplot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              ),
+              
+              tabPanel(title = "Permutation-plot",
+                        hidden(div(id = ns("result-permutationplot"),
+                                  fluidRow(
+                                    tags$div(
+                                      style = 'display:flex; gap:15px; padding:15px;',
+                                      tags$div(
+                                        style = 'width: calc(100% - 270px)',
+                                        withSpinner(
+                                          plotOutput(outputId = ns("permutationplot"),
+                                                      width = "100%",
+                                                      height = "auto")
+                                        )
+                                      ),
+                                      
+                                      tags$div(
+                                        id="drawer-opls-permutationplot", class="drawer",
+                                        tags$div(style = "padding:15px 20px 20px 20px;",
+                                                  downloadButton(outputId = ns("download_opls_permutationplot_data"),
+                                                                class = "action-button-primary",
+                                                                style = "width:140px !important; margin-bottom:10px; display:flex; align-items:center; gap:8px; justify-content:center;",
+                                                                label = "Download",
+                                                                icon = icon("download")),
+                                                  tags$div(
+                                                    style = "width:100%; max-height:calc(100vh - 70px); overflow-y:scroll; overflow-x:scroll;",
+                                                    DT::DTOutput(outputId = ns("opls_permutationplot_data"))
+                                                  )
+                                        )
+                                      ),
+                                      tags$div(id="overlay-opls-permutationplot", class="overlay", onclick = onOverlayClick('drawer-opls-permutationplot', 'overlay-opls-permutationplot')),
+                                      
+                                      tags$div(
+                                        style = 'width: 270px; z-index:101;',
+                                        tags$div(
+                                          style = 'max-height:600px; overflow-y:scroll; border:1px solid rgba(36, 41, 46, 0.12); border-radius:5px; background-color:rgb(247,247,247);',
+                                          
+                                          # Data settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'data-settings-opls-permutationplot', title = 'Data', collapsed = TRUE),
+                                            tags$div(id = 'data-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$button(class = "action-button-primary", 
+                                                                  style = "height:26px; font-size:13px; margin-bottom:8px;",
+                                                                  tags$div(tags$i(class="far fa-eye"),
+                                                                          tags$span("Inspect data"), 
+                                                                  ), 
+                                                                  onclick = onInspectDataBtnClick('drawer-opls-permutationplot', 'overlay-opls-permutationplot')
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'point-r2-settings-opls-permutationplot', title = 'Point(R2)', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'point-r2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          colourInput(inputId = ns("opls_permutationplot_point_r2_color"), label = "Point color", value = "#3F51B5",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          numericInput(inputId = ns('opls_permutationplot_point_r2_size'), label = 'Point size', step = 0.1, value = 3.5),
+                                                          selectInput(inputId = ns('opls_permutationplot_point_r2_shape'), label = 'Point shape', 
+                                                                      selected = '22', choices = c('Circle' = '21', 'Square' = '22', 'rhomboid' = '23', 'triangle' = '24'))
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'point-q2-settings-opls-permutationplot', title = 'Point(Q2)', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'point-q2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          colourInput(inputId = ns("opls_permutationplot_point_q2_color"), label = "Point color", value = "#4CAF50",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          numericInput(inputId = ns('opls_permutationplot_point_q2_size'), label = 'Point size', step = 0.1, value = 3.5),
+                                                          selectInput(inputId = ns('opls_permutationplot_point_q2_shape'), label = 'Point shape', 
+                                                                      selected = '21', choices = c('Circle' = '21', 'Square' = '22', 'rhomboid' = '23', 'triangle' = '24'))
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'line-r2-settings-opls-permutationplot', title = 'Line(R2)', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'line-r2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          colourInput(inputId = ns("opls_permutationplot_line_r2_color"), label = "Line color", value = "black",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          selectInput(inputId = ns('opls_permutationplot_line_r2_type'), label = 'Line type', selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash', 'blank')),
+                                                          numericInput(inputId = ns('opls_permutationplot_line_r2_weight'), label = 'Line weight', min = 0, step = 0.5, value = 0.5)
+                                                        )
+                                                      ),
+                                                      
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'line-q2-settings-opls-permutationplot', title = 'Line(Q2)', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'line-q2-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          colourInput(inputId = ns("opls_permutationplot_line_q2_color"), label = "Line color", value = "black",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE),
+                                                          selectInput(inputId = ns('opls_permutationplot_line_q2_type'), label = 'Line type', selected = 'dashed', choices = c('dashed', 'solid', 'dotted', 'dotdash', 'longdash', 'twodash', 'blank')),
+                                                          numericInput(inputId = ns('opls_permutationplot_line_q2_weight'), label = 'Line weight', min = 0, step = 0.5, value = 0.5)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Title settings
+                                          tags$div(
+                                            style = 'border-bottom:1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'title-settings-opls-permutationplot', title = 'Title', collapsed = TRUE),
+                                            tags$div(id = 'title-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      textInput(inputId = ns('opls_permutationplot_title_text'), label = 'Text'),
+                                                      selectInput(inputId = ns('opls_permutationplot_title_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                      numericInput(inputId = ns('opls_permutationplot_title_fontsize'), label = 'Font size', min = 1, value = 18, step = 1),
+                                                      selectInput(inputId = ns('opls_permutationplot_title_position'), label = 'Position', choices = c('Top center' = 0.5, 'Justification left' = 0, 'Justification right'= 1)),
+                                            )
+                                          ),
+                                          
+                                          # Panel settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'panel-settings-opls-permutationplot', title = 'Panel', collapsed = TRUE),
+                                            tags$div(id = 'panel-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-background-settings-opls-permutationplot', title = 'Background', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-background-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          colourInput(inputId = ns("opls_permutationplot_panel_background_fill_color"), label = "Fill color", value = "rgba(255, 255, 255, 0)",
+                                                                      allowTransparent = TRUE, closeOnClick = TRUE)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'panel-grid-settings-opls-permutationplot', title = 'Grid', collapsed = FALSE),
+                                                        tags$div(
+                                                          id = 'panel-grid-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:block;',
+                                                          checkboxInput(inputId = ns('opls_permutationplot_panel_settings_showgrid'), label = "Show grid lines", value = FALSE)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Axis settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'axis-settings-opls-permutationplot', title = 'Axis', collapsed = TRUE),
+                                            tags$div(id = 'axis-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'xaxis-settings-opls-permutationplot', title = 'xAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'xaxis-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_permutationplot_xaxis_label'), label = 'Label', value = ''),
+                                                          selectInput(inputId = ns('opls_permutationplot_xaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_permutationplot_xaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      tags$div(
+                                                        class = 'collapse-subitem',
+                                                        buildAccordionItem(id = 'yaxis-settings-opls-permutationplot', title = 'yAxis', collapsed = TRUE),
+                                                        tags$div(
+                                                          id = 'yaxis-settings-opls-permutationplot', class = 'collapse-subitem-body', style = 'display:none;',
+                                                          textInput(inputId = ns('opls_permutationplot_yaxis_label'), label = 'Label', value = ''),
+                                                          selectInput(inputId = ns('opls_permutationplot_yaxis_fontfamily'), label = 'Font family', choices = c('sans', 'mono', 'serif'), selected = 'sans'),
+                                                          numericInput(inputId = ns('opls_permutationplot_yaxis_fontsize'), label = 'Font size', min = 1, value = 12, step = 1)
+                                                        )
+                                                      ),
+                                                      
+                                            )
+                                          ),
+                                          
+                                          # Legend settings
+                                          tags$div(
+                                            style = 'border-bottom: 1px solid rgba(36, 41, 46, 0.12);',
+                                            buildAccordionItem(id = 'legend-settings-opls-permutationplot', title = 'Legend', collapsed = TRUE),
+                                            tags$div(id = 'legend-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      # legend显示在内部、外部、不显示
+                                                      radioButtons(inputId = ns('opls_permutationplot_legend_position'), label = '', inline = TRUE, selected = 'outside', choices = c('None' = 'none', 'Inside'= 'inside', 'Outside' = 'outside')),
+                                                      selectInput(inputId = ns('opls_permutationplot_legend_position_outside'), label = 'Position', selected = 'right', choices = c('Top' = 'top', 'Bottom' = 'bottom', 'Left' = 'left', 'Right' = 'right')),
+                                                      tags$div(id = 'opls_permutationplot_legend_position_inside', style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_permutationplot_legend_position_inside_x'), label = 'x', min = 0, max = 1, step = 0.1, value = 0.9)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_permutationplot_legend_position_inside_y'), label = 'y', min = 0, max = 1, step = 0.1, value = 0.2)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                          # Size
+                                          tags$div(
+                                            buildAccordionItem(id = 'size-settings-opls-permutationplot', title = 'Size', collapsed = TRUE),
+                                            tags$div(id = 'size-settings-opls-permutationplot', class = 'collapse-item-body', style = 'display:none;',
+                                                      tags$div(style = 'display:flex; align-items:center; justify-content:space-between; gap:10px;',
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_permutationplot_width'), label = 'Width', min = 100, step = 10, value = opls_result_permutationplot_width)
+                                                              ),
+                                                              tags$div(
+                                                                style = 'width:50%',
+                                                                numericInput(inputId = ns('opls_result_permutationplot_height'), label = 'Height', min = 100, step = 10, value = opls_result_permutationplot_height)
+                                                              )
+                                                      )
+                                            )
+                                          ),
+                                          
+                                        )
+                                      )
+                                    )
+                                  ),
+                                  tags$div(
+                                    style = 'width:120px; float:right;',
+                                    actionButton(inputId = ns("export_opls_result_permutationplot"),
+                                                  class = "action-button-primary",
+                                                  label = "Download",
+                                                  icon = icon("download"))
+                                  )
+                        ))
+              )     
             )
           )
-          
         )
       )
     )
-    
   )
-  
 }
 
 
@@ -1934,9 +1969,6 @@ dimensionReductionOPLSServer <- function(input, output, session) {
           tags$span(ncol(origdataset) - 1, style = 'background-color:#f37f40; color:white; padding:2px 5px; font-size:12px; border-radius: 0 4px 4px 0;')
         )
       })
-      
-      # 自动展开
-      js$collapse("box-dr-opls")
     }, error = function (e) {
       print(paste(e))
     })
@@ -3847,7 +3879,7 @@ dimensionReductionOPLSServer <- function(input, output, session) {
   output$export_opls_result_bioplot_ok <- downloadHandler(
     filename = function() {
       if (is.null(input$export_opls_result_bioplot_name) || input$export_opls_result_bioplot_name == "") {
-        paste("bioplot-", format(Sys.time(), "%Y%m%d%H%M%S"), input$export_opls_result_bioplot_format, sep="")
+        paste("biplot-", format(Sys.time(), "%Y%m%d%H%M%S"), input$export_opls_result_bioplot_format, sep="")
       } else {
         paste(input$export_opls_result_bioplot_name, input$export_opls_result_bioplot_format, sep = "")
       }
@@ -3865,7 +3897,7 @@ dimensionReductionOPLSServer <- function(input, output, session) {
   # 下载 bioplot 对应的数据
   output$download_opls_bioplot_data <- downloadHandler(
     filename = function() {
-      paste0("opls-bioplot-data.xlsx")
+      paste0("opls-biplot-data.xlsx")
     },
     content = function(file) {
       openxlsx::write.xlsx(opls_result_bioplot_data, file, asTable = TRUE)
