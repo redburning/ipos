@@ -1,0 +1,59 @@
+#difference_analysis-experiment_design-label {
+  display: none;
+}
+
+#difference_analysis-normal_distribution-label {
+  display: none;
+}
+
+#difference_analysis-test_method-label {
+  display: none;
+}
+
+#difference_analysis-settings_groupcol_selection-label {
+  display: none;
+}
+
+#difference_analysis-select_data_group-label {
+  display: none;
+}
+
+#shiny-tab-difference_analysis .box-header {
+  background-color: rgba(57, 57, 61, 0.8);
+  box-shadow: 0 5px 30px rgba(0,0,0,.1);
+  cursor: pointer;
+}
+
+#shiny-tab-difference_analysis .box-title {
+  color: white;
+}
+
+/*Z-Score plot*/
+label[for="difference_analysis-singletest_zscoreplot_data_pointcolor2"] {
+  display: none;
+}
+
+/*Volcano plot*/
+label[for="difference_analysis-singletest_volcanoplot_data_pointcolor2"] {
+  display: none;
+}
+
+label[for="difference_analysis-singletest_volcanoplot_data_pointcolor3"] {
+  display: none;
+}
+
+label[for="difference_analysis-singletest_volcanoplot_data_pointcolor4"] {
+  display: none;
+}
+
+#difference_analysis-dataloader-label {
+  display: none;
+}
+
+#difference_analysis-attachmentloader_sample_group-label {
+  display: none;
+}
+
+#difference_analysis-attachmentloader_var_class-label {
+  display: none;
+}

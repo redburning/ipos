@@ -1,0 +1,1 @@
+R -e "options(shiny.port = 8090); shiny::runApp('../src/app.local.R')"

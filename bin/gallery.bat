@@ -1,0 +1,1 @@
+R -e "options(shiny.port = 8098); shiny::runApp('../src/app.gallery.R')"

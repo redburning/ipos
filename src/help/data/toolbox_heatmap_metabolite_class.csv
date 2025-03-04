@@ -1,0 +1,62 @@
+Metabolite,class
+5-L-Glutamyl-taurine,Amino acid
+ADMA + SDMA,Amino acid
+Methionine sulfoxide,Amino acid
+N-Acetyl-L-phenylalanine,Amino acid
+O-Acetylserine,Amino acid
+3beta-Hydroxy-5-cholenoic acid taurine conjugate 3-O-sulfate,Bile acid
+Deoxycholic acid isomer 1,Bile acid
+Cer(d34:1)-Cer(d18:1/16:0),Ceramide
+5-HETE,Fatty acid
+Stearidonic acid (FFA(18:4n3)),Fatty acid
+Valeric acid (FFA(5:0)),Fatty acid
+PC(36:2+2O),Glycerophosphocholine
+PC(38:4+2O)-PC(38:4+2O),Glycerophosphocholine
+PC(38:6+O),Glycerophosphocholine
+PC(38:6e),Glycerophosphocholine
+PC(40:6+2O),Glycerophosphocholine
+PI(38:3)-PI(18:0/20:3),Glycerophosphoinositol
+Indole-3-carboxaldehyde,Microbial metabolite
+Indole-3-pyruvic acid,Microbial metabolite
+Proline betaine,Other
+Ala-Gly,Peptide
+gamma-Glu-Val,Peptide
+Gly-Glu,Peptide
+Gly-Leu,Peptide
+His-Trp,Peptide
+Ile-Gln + Leu-Gln,Peptide
+Ile-Gly,Peptide
+Ile-Leu + Leu-Ile,Peptide
+Ile-Pro,Peptide
+Leu-Pro,Peptide
+Ser-Tyr,Peptide
+Val-Ile + Leu-Val,Peptide
+Val-Leu,Peptide
+TG(50:3+2O)-TG(18:2+2O/16:0/16:1),Triacylglycerol
+TG(52:3+2O)-TG(18:2+2O/16:0/18:1),Triacylglycerol
+TG(52:3+O)-TG(18:2+O/16:0/18:1)1,Triacylglycerol
+TG(52:4+2O)-TG(18:2+2O/16:0/18:2),Triacylglycerol
+TG(52:4+O)-TG(18:2+O/16:0/18:2),Triacylglycerol
+TG(52:4+O)-TG(18:3+O/16:0/18:1)1,Triacylglycerol
+TG(52:4+O)-TG(18:3+O/16:0/18:1)2,Triacylglycerol
+TG(54:3+2O)-TG(18:1+2O/18:1/18:1),Triacylglycerol
+TG(54:3+O)-TG(18:1+O/18:1/18:1),Triacylglycerol
+TG(54:4+2O)-TG(18:2+2O/18:1/18:1),Triacylglycerol
+TG(54:4+O)-TG(18:2+O/18:1/18:1),Triacylglycerol
+TG(54:5+2O)-TG(18:2+2O/18:1/18:2),Triacylglycerol
+TG(54:5+O)-TG(18:1+O/18:2/18:2),Triacylglycerol
+TG(54:6+2O)-TG(18:2+2O/18:2/18:2),Triacylglycerol
+TG(54:6+2O)-TG(18:3+2O/18:1/18:2),Triacylglycerol
+TG(54:6+2O)-TG(20:4+2O/16:0/18:2),Triacylglycerol
+TG(54:6+O)-TG(18:2+O/18:1/18:3),Triacylglycerol
+TG(54:6+O)-TG(18:3+O/18:1/18:2)1,Triacylglycerol
+TG(54:7+2O)-TG(18:1+2O/18:3/18:3),Triacylglycerol
+TG(56:10)-TG(18:3/18:2/20:5),Triacylglycerol
+TG(56:5+O)-TG(18:3+O/18:1/20:1),Triacylglycerol
+TG(56:6+2O)-TG(20:4+2O/18:1/18:1),Triacylglycerol
+TG(56:7+2O)-TG(22:6+2O/16:0/18:1),Triacylglycerol
+TG(56:8+2O)-TG(22:6+2O/16:0/18:2),Triacylglycerol
+TG(57:8)-TG(17:0/18:2/22:6),Triacylglycerol
+TG(58:11)-TG(16:0/20:5/22:6),Triacylglycerol
+M1X-RT277MZ268,Unannotated
+M1X-RT556MZ235,Unannotated

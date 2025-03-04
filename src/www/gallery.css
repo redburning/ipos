@@ -1,0 +1,369 @@
+::-webkit-scrollbar {  
+	width: 3px;  
+	height: 6px;
+}
+
+::-webkit-scrollbar-thumb {  
+	border-radius: 3px;  	
+	background:#949DAE; 
+}
+
+/*隐藏首页*/
+.sidebar-menu>li:nth-child(1) { 
+  display:none !important;
+}
+
+.sidebar-menu>li:nth-child(2) { 
+  display:block !important;
+}
+
+
+.main-header {
+  position: fixed !important;
+  width: 100%;
+}
+
+.content-wrapper {
+  overflow-y: scroll;
+  max-height: calc(100vh - 50px);
+  margin-top: 40px;
+}
+
+.content-wrapper section {
+  background-image: none !important;
+}
+
+table.dataTable {
+  margin-top: 0px !important;
+}
+
+
+
+.gallery-module-head {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e1e5f2;
+  font-weight: normal;
+  color: #464646;
+  font-size: 18px;
+}
+
+.gallery-chart-container {
+  overflow: hidden; 
+  border-radius: 8px;
+  box-shadow: 0 5px 30px rgba(0,0,0,.1);
+}
+
+.gallery-chartarea {
+  width:100%; 
+  height:100%;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.gallery-chartarea:hover {
+  transform: scale(1.05);
+}
+
+.gallery-chart-title {
+  color: #293c55;
+  font-size: 14px;
+  font-family: 'Open Sans', "PingFang SC", Helvetica, Arial, sans-serif;
+}
+
+.gallery-chart-subtitle {
+  color: #aaa;
+  font-size: 12px;
+  font-family: 'Open Sans', "PingFang SC", Helvetica, Arial, sans-serif;
+}
+
+.gallery-chart-tag {
+  border-radius: 4px;
+  padding: 2px 4px;
+  background-color: #f6e34a;
+  font-size: 11px;
+  height: fit-content;
+}
+
+.gallery-chart-tag2 {
+  border-radius: 4px;
+  padding: 2px 4px;
+  background-color: #5891d0;
+  color: white;
+  font-size: 11px;
+  height: fit-content;
+}
+
+.gallery-chart-info {
+  display:flex; 
+  justify-content: space-between;
+  padding: 10px 10px 2px 10px;
+}
+
+.collapse-item-header {
+  display: flex; 
+  align-items: center;
+  padding: 6px 8px;
+  background-color: white;
+}
+
+.collapse-item-body {
+  background-color: white;
+  padding: 6px 18px;
+}
+
+#shiny-tab-dimension_reduction_opls_loadingplot {
+  padding-top: 10px;
+}
+
+#shiny-tab-dimension_reduction_opls_splot {
+  padding-top: 10px;
+}
+
+#shiny-tab-dimension_reduction_opls_vplot {
+  padding-top: 10px;
+}
+
+#shiny-tab-dimension_reduction_opls_loadingplot .box-body {
+  padding: 15px 0px 0px 0px !important;
+  background-color: #f4f4f6;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_matrix div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_matrix div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_matrix table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_sample_grouping div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_sample_grouping div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_sample_grouping table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_metabolite_class div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_metabolite_class div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_loadingplot-opls_gallery_loadingplot_metabolite_class table.dataTable {
+  margin-top: 0px !important;
+}
+
+
+
+#dimension_reduction_opls_loadingplot-select_data_group-label {
+  display: none !important;
+}
+
+#shiny-tab-dimension_reduction_opls_loadingplot > .container-fluid > .col-sm-12 {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+#shiny-tab-dimension_reduction_opls_splot .box-body {
+  padding: 15px 0px 0px 0px !important;
+  background-color: #f4f4f6;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_matrix div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_matrix div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_matrix table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_sample_grouping div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_sample_grouping div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_sample_grouping table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_metabolite_class div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_metabolite_class div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_metabolite_class table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_inspectdata div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_inspectdata div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_splot-opls_gallery_splot_inspectdata table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_splot-select_data_group-label {
+  display: none !important;
+}
+
+#shiny-tab-dimension_reduction_opls_splot > .container-fluid > .col-sm-12 {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+#shiny-tab-dimension_reduction_opls_vplot .box-body {
+  padding: 15px 0px 0px 0px !important;
+  background-color: #f4f4f6;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_matrix div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_matrix div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_matrix table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_sample_grouping div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_sample_grouping div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_sample_grouping table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_metabolite_class div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_metabolite_class div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_metabolite_class table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_inspectdata div.row {
+  margin-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_inspectdata div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-opls_gallery_vplot_inspectdata table.dataTable {
+  margin-top: 0px !important;
+}
+
+#dimension_reduction_opls_vplot-select_data_group-label {
+  display: none !important;
+}
+
+#shiny-tab-dimension_reduction_opls_vplot > .container-fluid > .col-sm-12 {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.shiny-spinner-output-container {
+  height: 100%;
+  background-color: white;
+}
+
+.box {
+  margin-bottom: 0px !important;
+}
+
+.box-header {
+  background-color: rgba(57, 57, 61, 0.8);
+  box-shadow: 0 5px 30px rgba(0,0,0,.1);
+  cursor: pointer;
+}
+
+.box-title {
+  color: white;
+}
+
+#shiny-tab-extended_toolbox_heatmap {
+  padding-top: 10px;
+}
+
+#shiny-tab-extended_toolbox_heatmap > .container-fluid > .col-sm-12 {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_matrix div.row {
+  margin-right: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_matrix div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_matrix table.dataTable {
+  margin-top: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_sample_grouping div.row {
+  margin-right: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_sample_grouping div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_sample_grouping table.dataTable {
+  margin-top: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_metabolite_class div.row {
+  margin-right: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_metabolite_class div.col-sm-12 {
+  padding-right: 0px !important;
+}
+
+#extended_toolbox_heatmap-toolbox_gallery_metabolite_class table.dataTable {
+  margin-top: 0px !important;
+}
+
+#searched-gallery {
+  background-color: #f8f8f8;
+}

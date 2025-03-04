@@ -1,0 +1,156 @@
+Sample,Type,Group
+S3,Normal,Control
+S5,Normal,Control
+S7,Normal,Control
+S8,Normal,Control
+S9,Normal,Control
+S10,Normal,Control
+S11,Normal,Control
+S12,Normal,Control
+S17,Normal,Control
+S18,Normal,Control
+S19,Normal,Control
+S20,Normal,Control
+S21,Normal,Control
+S22,Normal,Control
+S23,Normal,Control
+S25,Normal,Control
+S26,Normal,Control
+S27,Normal,Control
+S30,Normal,Control
+S32,Normal,Control
+S36,Normal,Control
+S37,Normal,Control
+S38,Normal,Control
+S40,Normal,Control
+S42,Normal,Control
+S43,Normal,Control
+S45,Normal,Control
+S48,Normal,Control
+S50,Normal,Control
+S53,Normal,Control
+S54,Normal,Control
+S56,Normal,Control
+S57,Normal,Control
+S58,Normal,Control
+S60,Normal,Control
+S64,Normal,Control
+S65,Normal,Control
+S66,Normal,Control
+S67,Normal,Control
+S69,Normal,Control
+S70,Normal,Control
+S72,Normal,Control
+S77,Normal,Control
+S78,Normal,Control
+S79,Normal,Control
+S80,Normal,Control
+S81,Normal,Control
+S82,Normal,Control
+S83,Normal,Control
+S84,Normal,Control
+S85,Normal,Test
+S87,Normal,Test
+S88,Normal,Test
+S89,Normal,Test
+S90,Normal,Test
+S91,Normal,Test
+S92,Normal,Test
+S93,Normal,Test
+S95,Normal,Test
+S96,Normal,Test
+S98,Normal,Test
+S99,Normal,Test
+S101,Normal,Test
+S103,Normal,Test
+S104,Normal,Test
+S105,Normal,Test
+S109,Normal,Test
+S110,Normal,Test
+S111,Normal,Test
+S112,Normal,Test
+S114,Normal,Test
+S117,Normal,Test
+S118,Normal,Test
+S119,Normal,Test
+S120,Normal,Test
+S121,Normal,Test
+S122,Normal,Test
+S123,Normal,Test
+S124,Normal,Test
+S126,Normal,Test
+S128,Normal,Test
+S129,Normal,Test
+S131,Normal,Test
+S133,Normal,Test
+S135,Normal,Test
+S136,Normal,Test
+S138,Normal,Test
+S139,Normal,Test
+S140,Normal,Test
+S141,Normal,Test
+S142,Normal,Test
+S143,Normal,Test
+S144,Normal,Test
+S145,Normal,Test
+S146,Normal,Test
+S147,Normal,Test
+S148,Normal,Test
+S150,Normal,Test
+S152,Normal,Test
+S154,Normal,Test
+S155,Normal,Test
+S156,Normal,Test
+S157,Normal,Test
+S159,Normal,Test
+S160,Normal,Test
+S162,Normal,Test
+S163,Normal,Test
+S167,Normal,Test
+S14,Early Abortion,Test
+S24,Early Abortion,Test
+S29,Early Abortion,Test
+S35,Early Abortion,Test
+S39,Early Abortion,Test
+S41,Early Abortion,Test
+S44,Early Abortion,Test
+S46,Early Abortion,Test
+S62,Early Abortion,Test
+S75,Early Abortion,Test
+S86,Early Abortion,Test
+S100,Early Abortion,Test
+S107,Early Abortion,Test
+S115,Early Abortion,Test
+S130,Early Abortion,Test
+S149,Early Abortion,Test
+S153,Early Abortion,Test
+S178,Early Abortion,Test
+S216,Early Abortion,Test
+S223,Early Abortion,Test
+S228,Early Abortion,Test
+S259,Early Abortion,Test
+S261,Early Abortion,Test
+S274,Early Abortion,Test
+S285,Early Abortion,Test
+S301,Early Abortion,Test
+S322,Early Abortion,Test
+S327,Early Abortion,Test
+S342,Early Abortion,Test
+S358,Early Abortion,Test
+S359,Early Abortion,Test
+S373,Early Abortion,Test
+S377,Early Abortion,Test
+S382,Early Abortion,Test
+S385,Early Abortion,Test
+S390,Early Abortion,Test
+S392,Early Abortion,Test
+S399,Early Abortion,Test
+S401,Early Abortion,Test
+S409,Early Abortion,Test
+S422,Early Abortion,Test
+S458,Early Abortion,Test
+SQC1,QC,Test
+SQC2,QC,Test
+SQC3,QC,Test
+SQC4,QC,Test
+SQC5,QC,Test
